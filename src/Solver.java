@@ -24,6 +24,7 @@ public class Solver {
         }else {
             sp.kedit(word,2);
             sp.setCorrectWords();
+            sp.sortCorrectWords();
             sp.printOut();
         }
     }

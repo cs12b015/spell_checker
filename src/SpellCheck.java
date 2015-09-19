@@ -107,5 +107,13 @@ public class SpellCheck {
         }
     }
 
+    public void sortCorrectWords(){
+        Collections.sort(correctWords, new Comparator<String>(){
+            public int compare(String str1, String str2){
+                return dictionary.get(str2).subtract(dictionary.get(str1)).intValue();
+            }
+        });
+    }
+
 
 }
