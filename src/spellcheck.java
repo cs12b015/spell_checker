@@ -43,7 +43,7 @@ public class spellcheck {
     }	
 
     public static void printout(List<String> words){
-        System.out.println(correctwords);
+        System.out.println(words);
     }
 
 
