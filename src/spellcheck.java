@@ -4,11 +4,12 @@ import java.math.*;
 
 public class spellcheck {
     public static Map<String, BigInteger> dictionary = new HashMap<String, BigInteger>();
-    public static Map<String, BigInteger> correctwords = new HashMap<String, BigInteger>();
+    public static Map<String, BigInteger> correctwords1 = new HashMap<String, BigInteger>();
+    public static Map<String, BigInteger> correctwords2 = new HashMap<String, BigInteger>();
 
     public static void main(String[] args) throws NumberFormatException, IOException {
         System.out.println(args[0]);
-        BufferedReader br = new BufferedReader(new FileReader("test_db.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("src/test_db.csv"));
         String line =  null;
 
         while((line=br.readLine())!=null){
@@ -25,23 +26,53 @@ public class spellcheck {
             /*System.out.println("no it is a wrong word");*/
             List<String> editings = editings(args[0]);
             for(int i=0; i < editings.size(); i++){
-                if(checkspelling(editings.get(i)) && !correctwords.containsKey(editings.get(i))){
-                    correctwords.put(editings.get(i), dictionary.get(editings.get(i).toUpperCase()));
+                if(checkspelling(editings.get(i)) && !correctwords1.containsKey(editings.get(i))){
+                    correctwords1.put(editings.get(i), dictionary.get(editings.get(i).toUpperCase()));
                 }
                 /*For each edit 1 distance word, get the words with distance 1 and add known words to correctwords.*/
                 List<String> edit2 = editings(editings.get(i));
                 for (int j = 0; j < edit2.size(); j++){
-                    if (checkspelling(edit2.get(j)) && !correctwords.containsKey(edit2.get(j))){
-                        correctwords.put(edit2.get(j), dictionary.get(edit2.get(j).toUpperCase()));
+                    if (checkspelling(edit2.get(j)) && !correctwords1.containsKey(edit2.get(j))){
+                        correctwords2.put(edit2.get(j), dictionary.get(edit2.get(j).toUpperCase()));
                     }
                     /*For each edit 2 distance words, get the words*/
                 }
             }
             //System.out.println(correctwords);
-            printout(correctwords);
+            printout(correctwords1);
+            printout(correctwords2);
+            correctwords1=sortByValue(correctwords1);
+            correctwords2=sortByValue(correctwords2);
+            printout(correctwords1);
+            printout(correctwords2);
+            
+            
+            
+            
+            
+           /* TreeMap<String, Integer> sortedMap1 = SortByValue(correctwords1);
+            TreeMap<String, Integer> sortedMap2 = SortByValue(correctwords2);*/
         }	
     }	
 
+    public static Map<String, BigInteger>  sortByValue(Map<String, BigInteger>  unsortMap) {	 
+    	List list = new LinkedList(unsortMap.entrySet());
+     
+    	Collections.sort(list, new Comparator() {
+    		public int compare(Object o2, Object o1) {
+    			return ((Comparable) ((Map.Entry) (o1)).getValue())
+    						.compareTo(((Map.Entry) (o2)).getValue());
+    		}
+    	});
+     
+    	Map sortedMap = new LinkedHashMap();
+    	for (Iterator it = list.iterator(); it.hasNext();) {
+    		Map.Entry entry = (Map.Entry) it.next();
+    		sortedMap.put(entry.getKey(), entry.getValue());
+    	}
+    	return sortedMap;
+    }
+    
     public static void printout(Map<String, BigInteger> words){
         System.out.println(words);
     }
