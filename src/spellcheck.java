@@ -4,10 +4,9 @@ import java.math.*;
 
 public class spellcheck {
     public static Map<String, BigInteger> dictionary = new HashMap<String, BigInteger>();
-    public static List<String> correctwords;
+    public static Map<String, BigInteger> correctwords = new HashMap<String, BigInteger>();
 
     public static void main(String[] args) throws NumberFormatException, IOException {
-        correctwords = new ArrayList<String>();
         System.out.println(args[0]);
         BufferedReader br = new BufferedReader(new FileReader("test_db.csv"));
         String line =  null;
@@ -26,15 +25,16 @@ public class spellcheck {
             /*System.out.println("no it is a wrong word");*/
             List<String> editings = editings(args[0]);
             for(int i=0; i < editings.size(); i++){
-                if(checkspelling(editings.get(i)) && !correctwords.contains(editings.get(i))){
-                    correctwords.add(editings.get(i));
+                if(checkspelling(editings.get(i)) && !correctwords.containsKey(editings.get(i))){
+                    correctwords.put(editings.get(i), dictionary.get(editings.get(i).toUpperCase()));
                 }
                 /*For each edit 1 distance word, get the words with distance 1 and add known words to correctwords.*/
                 List<String> edit2 = editings(editings.get(i));
                 for (int j = 0; j < edit2.size(); j++){
-                    if (checkspelling(edit2.get(j)) && !correctwords.contains(edit2.get(j))){
-                        correctwords.add(edit2.get(j));
+                    if (checkspelling(edit2.get(j)) && !correctwords.containsKey(edit2.get(j))){
+                        correctwords.put(edit2.get(j), dictionary.get(edit2.get(j).toUpperCase()));
                     }
+                    /*For each edit 2 distance words, get the words*/
                 }
             }
             //System.out.println(correctwords);
@@ -42,7 +42,7 @@ public class spellcheck {
         }	
     }	
 
-    public static void printout(List<String> words){
+    public static void printout(Map<String, BigInteger> words){
         System.out.println(words);
     }
 

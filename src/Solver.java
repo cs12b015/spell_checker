@@ -22,7 +22,7 @@ public class Solver {
         if (sp.isCorrect(word)){
             System.out.println("yes it is a correct word");
         }else {
-            sp.kedit(word,2);
+            sp.kedit(word,3);
             sp.setCorrectWords();
             sp.sortCorrectWords();
             sp.printOut();
