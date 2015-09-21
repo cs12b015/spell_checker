@@ -6,10 +6,11 @@ public class spellcheck {
     public static Map<String, BigInteger> dictionary = new HashMap<String, BigInteger>();
     public static Map<String, BigInteger> correctwords1 = new HashMap<String, BigInteger>();
     public static Map<String, BigInteger> correctwords2 = new HashMap<String, BigInteger>();
+    public static int[][] del_cm = new int[26][26];
 
     public static void main(String[] args) throws NumberFormatException, IOException {
         System.out.println(args[0]);
-        BufferedReader br = new BufferedReader(new FileReader("src/test_db.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("test_db.csv"));
         String line =  null;
 
         while((line=br.readLine())!=null){
@@ -17,6 +18,24 @@ public class spellcheck {
             BigInteger abcd = new BigInteger(arr[1]);
             dictionary.put(arr[0],abcd);
         }
+
+        BufferedReader br_del = new BufferedReader(new FileReader("del_cm.csv"));
+
+        String del_line = null;
+        int l = 0;
+        while((del_line = br_del.readLine()) != null){
+            String del_arr[] = del_line.split("\\s+");
+            //System.out.println(del_arr);
+            int m = 0;
+            for (String del_int : del_arr){
+                del_cm[l][m] = Integer.parseInt(del_int);
+                //System.out.print(del_cm[l][m]);
+                m++;
+            }
+            //System.out.println(" ");
+            l++;
+        }
+
 
         if(dictionary.containsKey(args[0].toUpperCase()))
         {
