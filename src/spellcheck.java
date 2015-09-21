@@ -10,7 +10,8 @@ public class spellcheck {
 
     public static void main(String[] args) throws NumberFormatException, IOException {
        // System.out.println(args[0]);
-        BufferedReader br = new BufferedReader(new FileReader("src/test_db.csv"));
+        long init_time = System.currentTimeMillis();
+        BufferedReader br = new BufferedReader(new FileReader("test_db.csv"));
         String line =  null;
 
         while((line=br.readLine())!=null){
@@ -19,7 +20,7 @@ public class spellcheck {
             dictionary.put(arr[0],abcd);
         }
 
-        BufferedReader br_del = new BufferedReader(new FileReader("src/del_cm.csv"));
+        BufferedReader br_del = new BufferedReader(new FileReader("del_cm.csv"));
 
         String del_line = null;
         int l = 0;
@@ -71,8 +72,9 @@ public class spellcheck {
                 	list1.add(list2.get(z));
                 }
             }
-            List<String> list3 =list1.subList(0, 3);
+            List<String> list3 =list1.subList(0, 10);
             System.out.println(list3);
+            System.out.print(System.currentTimeMillis() - init_time);
             
             
            /* TreeMap<String, Integer> sortedMap1 = SortByValue(correctwords1);

@@ -107,6 +107,10 @@ public class SpellCheck {
         }
     }
 
+    public ArrayList<String> getCorrectWords(){
+        return new ArrayList<>(this.correctWords);
+    }
+
     public void sortCorrectWords(){
         Collections.sort(correctWords, new Comparator<String>(){
             public int compare(String str1, String str2){
