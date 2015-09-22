@@ -8,6 +8,7 @@ public class SpellCheck {
     private List<String> correctWords;
     private List<String> seen;
     private List<String> unseen;
+    private String wrong_word;
 
     /*Constructors for SpellCheck class*/
 
@@ -79,6 +80,7 @@ public class SpellCheck {
 
     public void kedit(String word, int k){
 
+        this.wrong_word = word;
         unseen.add(word);
         List<String> current;
 
@@ -112,11 +114,16 @@ public class SpellCheck {
     }
 
     public void sortCorrectWords(){
-        Collections.sort(correctWords, new Comparator<String>(){
-            public int compare(String str1, String str2){
-                return dictionary.get(str2).subtract(dictionary.get(str1)).intValue();
-            }
-        });
+        try {
+            Collections.sort(correctWords, new Comparator<String>(){
+                public int compare(String str1, String str2){
+                    return dictionary.get(str2).subtract(dictionary.get(str1)).intValue();
+                }
+            });
+        }catch(IllegalArgumentException e){
+            System.out.println(this.wrong_word);
+            System.out.println("There is an illegal argument exception.");
+        }
     }
 
 
