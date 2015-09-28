@@ -1,4 +1,5 @@
 import java.io.*;
+import java.lang.*;
 import java.util.*;
 import java.math.*;
 
@@ -11,7 +12,7 @@ public class spellcheck {
     public static void main(String[] args) throws NumberFormatException, IOException {
        // System.out.println(args[0]);
         long init_time = System.currentTimeMillis();
-        BufferedReader br = new BufferedReader(new FileReader("test_db.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("src/test_db.csv"));
         String line =  null;
 
         while((line=br.readLine())!=null){
@@ -20,7 +21,7 @@ public class spellcheck {
             dictionary.put(arr[0],abcd);
         }
 
-        BufferedReader br_del = new BufferedReader(new FileReader("del_cm.csv"));
+        BufferedReader br_del = new BufferedReader(new FileReader("src/del_cm.csv"));
 
         String del_line = null;
         int l = 0;
@@ -36,12 +37,17 @@ public class spellcheck {
             //System.out.println(" ");
             l++;
         }
-
-
+        ///////////////////////////////////////////////////////////////////////////////
+        /*checking if edit distence works*/
+        String sting1="SUNDAY";
+        String string2= "SATURDAY";
+        int cost= edit_distance(sting1,string2 , sting1.length(), string2.length());
+        System.out.println("the cost is "+cost);
         if(dictionary.containsKey(args[0].toUpperCase()))
         {
             System.out.println("yes it is a correct word");
         }
+        ///////////////////////////////////////////////////////////////////////////////
         else{
             /*System.out.println("no it is a wrong word");*/
             List<String> editings = editings(args[0]);
@@ -114,7 +120,28 @@ public class spellcheck {
             return false;		
     }
 
-
+    public static int edit_distance(String string1,String string2,int m,int n){
+    	if( m == 0 && n == 0 )
+    		return 0;
+    	if( m == 0 )
+    		return n;
+    	if( n == 0 )
+    		return m;
+    	int popo;
+    	int left = edit_distance(string1, string2, m-1, n) + 1;
+    	int right = edit_distance(string1, string2, m, n-1) + 1;
+    	if((string1.charAt(m-1)!= string2.charAt(n-1)))
+    	{
+    		popo=1;
+    	}
+    	else
+    	{
+    		popo=0;
+    	}
+    	int corner = edit_distance(string1, string2, m-1, n-1) + popo;
+    	return Math.min(Math.min(left, right), corner);
+    }
+    
     public static List<String> editings(String word) {
         List<String> list = new ArrayList<String>();
 
