@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.*;
 import java.math.*;
+import java.lang.*;
+import org.apache.commons.codec.language;
 
 public class SpellCheck {
 
@@ -118,6 +120,20 @@ public class SpellCheck {
             Collections.sort(correctWords, new Comparator<String>(){
                 public int compare(String str1, String str2){
                     return dictionary.get(str2).subtract(dictionary.get(str1)).intValue();
+                }
+            });
+        }catch(IllegalArgumentException e){
+            System.out.println(this.wrong_word);
+            System.out.println("There is an illegal argument exception.");
+        }
+    }
+
+    public void sortCorrectWordsBySoundex(){
+        try {
+            Collections.sort(correctWords, new Comparator<String>(){
+                public int compare(String str1, String str2){
+                    Soundex soundes = new Soundex();
+                    return soundex.difference(str1, str2);
                 }
             });
         }catch(IllegalArgumentException e){
