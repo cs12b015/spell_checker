@@ -12,6 +12,7 @@ public class TrainContext {
     public static HashMap<String, HashMap<String, Integer>> likelihood = new HashMap<String, HashMap<String, Integer>>();
 
     public static void main(String[] args) throws NumberFormatException, IOException {
+        long act_time = System.currentTimeMillis();
 
         //long init_time = System.currentTimeMillis();
         
@@ -67,6 +68,8 @@ public class TrainContext {
         //System.out.println(likelihood);
         
         long init_time = System.currentTimeMillis();
+
+        System.out.println(act_time-init_time);
 
         br = new BufferedReader(new FileReader("test.txt"));
 
