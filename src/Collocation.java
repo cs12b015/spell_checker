@@ -1,0 +1,89 @@
+import java.lang.*;
+import java.io.*;
+import java.util.*;
+import java.math.*;
+
+public class Collocation{
+    
+    //Save each collocation as key with its POS tag as value.
+    //Value will be a null string if key itself is a POS tag.
+    //The order of hashmap keys is the collocation order.
+    private ArrayList<ColWord> collocation;
+
+    //This variable says whether the collocation belongs to the left side of the word or the right.
+    //left = 0; right = 1;
+    private int side;
+
+    //The size of the collocation.
+    private int size;
+
+    //Constructor for collocation without side specified
+    //Side is assumed to be left by default
+    public Collocation(ArrayList<ColWord> collocation){
+        this.collocation = collocation;
+        this.size = collocation.size();
+        this.side = 0;
+    }
+
+    //Constructor for collocation with side specified
+    public Collocation(ArrayList<ColWord> collocation, int side){
+        this.collocation = collocation;
+        this.size = collocation.size();
+        this.side = side;
+    }
+
+    //Get method for side of collocation
+    public int getSide(){
+        return this.side;
+    }
+
+    //Get method for size of collocation
+    public int getSize(){
+        return this.size;
+    }
+
+    //Get method for colWord in a collocation, given an index
+    public ColWord getColWord(int i){
+        return this.collocation.get(i);
+    }
+
+    //This method says whether this collocation has any conflicts with the given collocation c.
+    public boolean hasConflict(Collocation c){
+        //Check if both the collocations lie on the same side of the word.
+        //If no, then there is no point in checking for conflict. Else, check.
+        if (this.side != c.getSide()){
+            return false;
+        }else {
+            //Check for the smaller collocation.
+            int small_size = 0;
+            if (this.size < c.getSize()){
+                small_size = this.size;
+            }else {
+                small_size = c.getSize();
+            }
+
+            int conflict_size = 0;
+            //If the collocations are on the left side, do a bottom up
+            if (this.side == 0){
+                for (int i = 1; i <= small_size; i++){
+                    if (this.collocation.get(this.size-i).matches(c.getColWord(c.getSize()-i))){
+                        conflict_size++;
+                    }else {
+                        continue;
+                    }
+                }
+            }else {
+                for (int i = 0; i < small_size; i++){
+                    if (this.collocation.get(i).matches(c.getColWord(i))){
+                        conflict_size++;
+                    }else {
+                        continue;
+                    }
+                }
+            }
+
+            if (conflict_size == small_size) return true;
+            else return false;
+        }
+    }
+}
