@@ -33,30 +33,70 @@ public class TrainCollocation{
 
             for (int i = 1; i < 6; i++){
                 if (isAmbiguous(arr[i].toUpperCase())){
-                    HashMap<Collocation, Integer> temp_coll_hash = new HashMap<Collocation, Integer>();
 
-                    if (i > 1){
-                        ArrayList<ColWord> temp_coll = new ArrayList<ColWord>();
-                        for (int j = 1; j < i; j++){
-                            ColWord temp = new ColWord(arr[j+5]);
-                            temp_coll.add(temp);
+                    if (collocations.containsKey(arr[i].toUpperCase())){
+
+                        HashMap<Collocation, Integer> temp_coll_hash = collocations.get(arr[i].toUpperCase());
+
+                        if (i > 1){
+                            ArrayList<ColWord> temp_coll = new ArrayList<ColWord>();
+                            for (int j = 1; j < i; j++){
+                                ColWord temp = new ColWord(arr[j+5].toUpperCase());
+                                temp_coll.add(temp);
+                            }
+                            Collocation coll = new Collocation(temp_coll);
+
+                            if (temp_coll_hash.containsKey(coll)){
+                                temp_coll_hash.put(coll, temp_coll_hash.get(coll)+ Integer.parseInt(arr[0]));
+                            }else {
+                                temp_coll_hash.put(coll, Integer.parseInt(arr[0]));
+                            }
                         }
 
-                        temp_coll_hash.put(new Collocation(temp_coll), Integer.parseInt(arr[0]));
-                    }
+                        if (i < 5){
+                            ArrayList<ColWord> temp_right_coll = new ArrayList<ColWord>();
+                            for (int j = i; j < 6; j++){
+                                ColWord temp = new ColWord(arr[j+5].toUpperCase());
+                                temp_right_coll.add(temp);
+                            }
+                            Collocation right_coll = new Collocation(temp_right_coll, 1);
 
-
-                    if (i < 5){
-                        ArrayList<ColWord> temp_right_coll = new ArrayList<ColWord>();
-                        for (int j = i; j < 6; j++){
-                            ColWord temp = new ColWord(arr[j+5]);
-                            temp_right_coll.add(temp);
+                            if (temp_coll_hash.containsKey(right_coll)){
+                                temp_coll_hash.put(right_coll, temp_coll_hash.get(right_coll) + Integer.parseInt(arr[0]));
+                            }else {
+                                temp_coll_hash.put(right_coll, Integer.parseInt(arr[0]));
+                            }
                         }
 
-                        temp_coll_hash.put(new Collocation(temp_right_coll, 1), Integer.parseInt(arr[0]));
+                        collocations.put(arr[i].toUpperCase(), temp_coll_hash);
+
+                    }else {
+                        HashMap<Collocation, Integer> temp_coll_hash = new HashMap<Collocation, Integer>();
+
+                        if (i > 1){
+                            ArrayList<ColWord> temp_coll = new ArrayList<ColWord>();
+                            for (int j = 1; j < i; j++){
+                                ColWord temp = new ColWord(arr[j+5].toUpperCase());
+                                temp_coll.add(temp);
+                            }
+
+                            temp_coll_hash.put(new Collocation(temp_coll), Integer.parseInt(arr[0]));
+                        }
+
+
+                        if (i < 5){
+                            ArrayList<ColWord> temp_right_coll = new ArrayList<ColWord>();
+                            for (int j = i; j < 6; j++){
+                                ColWord temp = new ColWord(arr[j+5].toUpperCase());
+                                temp_right_coll.add(temp);
+                            }
+
+                            temp_coll_hash.put(new Collocation(temp_right_coll, 1), Integer.parseInt(arr[0]));
+                        }
+
+                        collocations.put(arr[i].toUpperCase(), temp_coll_hash);
                     }
 
-                    collocations.put(arr[i], temp_coll_hash);
                 }
             }
         }
