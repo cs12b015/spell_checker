@@ -19,7 +19,7 @@ public class TrainCollocation{
             ArrayList<String> temp = new ArrayList<String>();
 
             for (int i = 0; i < arr.length; i++){
-                temp.add(arr[i].trim().toUpperCase());
+                temp.add(arr[i].trim());
                 //System.out.println(arr[i].trim());
             }
 
@@ -32,16 +32,16 @@ public class TrainCollocation{
             String arr[] = line.split("\t");
 
             for (int i = 1; i < 6; i++){
-                if (isAmbiguous(arr[i].toUpperCase())){
+                if (isAmbiguous(arr[i])){
 
-                    if (collocations.containsKey(arr[i].toUpperCase())){
+                    if (collocations.containsKey(arr[i])){
 
-                        HashMap<Collocation, Integer> temp_coll_hash = collocations.get(arr[i].toUpperCase());
+                        HashMap<Collocation, Integer> temp_coll_hash = collocations.get(arr[i]);
 
                         if (i > 1){
                             ArrayList<ColWord> temp_coll = new ArrayList<ColWord>();
                             for (int j = 1; j < i; j++){
-                                ColWord temp = new ColWord(arr[j+5].toUpperCase());
+                                ColWord temp = new ColWord(arr[j+5]);
                                 temp_coll.add(temp);
                             }
                             Collocation coll = new Collocation(temp_coll);
@@ -56,7 +56,7 @@ public class TrainCollocation{
                         if (i < 5){
                             ArrayList<ColWord> temp_right_coll = new ArrayList<ColWord>();
                             for (int j = i; j < 6; j++){
-                                ColWord temp = new ColWord(arr[j+5].toUpperCase());
+                                ColWord temp = new ColWord(arr[j+5]);
                                 temp_right_coll.add(temp);
                             }
                             Collocation right_coll = new Collocation(temp_right_coll, 1);
@@ -68,7 +68,7 @@ public class TrainCollocation{
                             }
                         }
 
-                        collocations.put(arr[i].toUpperCase(), temp_coll_hash);
+                        collocations.put(arr[i], temp_coll_hash);
 
                     }else {
                         HashMap<Collocation, Integer> temp_coll_hash = new HashMap<Collocation, Integer>();
@@ -76,7 +76,7 @@ public class TrainCollocation{
                         if (i > 1){
                             ArrayList<ColWord> temp_coll = new ArrayList<ColWord>();
                             for (int j = 1; j < i; j++){
-                                ColWord temp = new ColWord(arr[j+5].toUpperCase());
+                                ColWord temp = new ColWord(arr[j+5]);
                                 temp_coll.add(temp);
                             }
 
@@ -87,14 +87,14 @@ public class TrainCollocation{
                         if (i < 5){
                             ArrayList<ColWord> temp_right_coll = new ArrayList<ColWord>();
                             for (int j = i; j < 6; j++){
-                                ColWord temp = new ColWord(arr[j+5].toUpperCase());
+                                ColWord temp = new ColWord(arr[j+5]);
                                 temp_right_coll.add(temp);
                             }
 
                             temp_coll_hash.put(new Collocation(temp_right_coll, 1), Integer.parseInt(arr[0]));
                         }
 
-                        collocations.put(arr[i].toUpperCase(), temp_coll_hash);
+                        collocations.put(arr[i], temp_coll_hash);
                     }
 
                 }
