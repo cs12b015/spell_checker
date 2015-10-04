@@ -13,7 +13,7 @@ public class TrainCollocation{
     
     public static void main(String[] args) throws NumberFormatException, IOException {
         
-        BufferedReader br = new BufferedReader(new FileReader("src/test_db.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("test_db.csv"));
         String line =  null;
 
         while((line=br.readLine())!=null){
@@ -22,7 +22,7 @@ public class TrainCollocation{
             dictionary.put(arr[0],abcd);
         }
     	
-        br = new BufferedReader(new FileReader("src/homophonedb.txt"));
+        br = new BufferedReader(new FileReader("homophonedb.txt"));
 
 
         while((line = br.readLine()) != null){
@@ -37,7 +37,7 @@ public class TrainCollocation{
             homophonedb.add(temp);
         }
 
-        br = new BufferedReader(new FileReader("src/w5c.txt"));
+        br = new BufferedReader(new FileReader("w5c.txt"));
 
         while((line=br.readLine())!=null){
             String arr[] = line.split("\t");
@@ -117,7 +117,8 @@ public class TrainCollocation{
             }
         }
         
-        br = new BufferedReader(new FileReader("src/test.txt"));
+        br = new BufferedReader(new FileReader("test.txt"));
+        /*
         while((line = br.readLine()) != null){
             String arr[] = line.split(" ");
             for(int i = 0; i < arr.length; i++){
@@ -201,6 +202,7 @@ public class TrainCollocation{
             	}
             }
         }
+        */
 
         System.out.println(collocations);
 

@@ -2,6 +2,7 @@ import java.lang.*;
 import java.io.*;
 import java.util.*;
 import java.math.*;
+//import org.apache.commons.lang3.builder;
 
 public class Collocation{
     
@@ -49,12 +50,25 @@ public class Collocation{
 
     @Override
     public boolean equals(Object obj){
+
+        if (!(obj instanceof Collocation)) return false;
+        if (obj == this) return true;
+
     	Collocation c = (Collocation)obj;
-    	if(this.side != c.side)
+    	if(this.side != c.getSide())
     		return false;
     	else{
-    		return this.collocation.equals(c.collocation);
+            if (this.size != c.getSize()){
+                return false;
+            }else {
+                return true;
+            }
     	}
+    }
+
+    @Override
+    public int hashCode(){
+        return 1;
     }
     
     //This method says whether this collocation has any conflicts with the given collocation c.
