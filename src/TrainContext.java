@@ -10,13 +10,13 @@ public class TrainContext {
     public static ArrayList<ArrayList<String>> homophonedb = new ArrayList<ArrayList<String>>();
 
     public static HashMap<String, HashMap<String, Integer>> likelihood = new HashMap<String, HashMap<String, Integer>>();
-
+    
     public static void main(String[] args) throws NumberFormatException, IOException {
         long act_time = System.currentTimeMillis();
 
         //long init_time = System.currentTimeMillis();
         
-        BufferedReader br = new BufferedReader(new FileReader("test_db.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("data/test_db.csv"));
         String line =  null;
 
         while((line=br.readLine())!=null){
@@ -25,7 +25,7 @@ public class TrainContext {
             dictionary.put(arr[0],abcd);
         }
 
-        br = new BufferedReader(new FileReader("homophonedb.txt"));
+        br = new BufferedReader(new FileReader("data/homophonedb.txt"));
 
         while((line = br.readLine()) != null){
             String arr[] = line.split(",");
@@ -41,37 +41,41 @@ public class TrainContext {
         //System.out.println(System.currentTimeMillis() - init_time);
         //System.out.print(homophonedb);
 
-        br = new BufferedReader(new FileReader("w3_.txt"));
+        
+        
+        br = new BufferedReader(new FileReader("data/likelihood.txt"));
+        line =  null;
+        int counter=0;
+        String temp="";
+        
+        while((line=br.readLine())!=null){
+        	if(counter % 2 == 0){
+        		temp=line;
+        		/*System.out.println(line);*/
+        	}
+        	else{
+        		
+        		
+        		line = line.substring(1, line.length()-1);
+        		String[] keyValuePairs = line.split(",");  
+        		
+        		HashMap<String, Integer> tempvalue = new HashMap<String, Integer> ();               
 
-        while((line = br.readLine()) != null) {
-            String arr[] = line.split("\t");
-
-            if (isAmbiguous(arr[1])){
-                //System.out.println("Found an ambiguous word: " + arr[1]);
-                addToLikelihood(arr[1], arr[2], Integer.parseInt(arr[0]));
-                addToLikelihood(arr[1], arr[3], Integer.parseInt(arr[0]));
-            }
-
-            if (isAmbiguous(arr[2])){
-                //System.out.println("Found an ambiguous word: " + arr[1]);
-                addToLikelihood(arr[2], arr[1], Integer.parseInt(arr[0]));
-                addToLikelihood(arr[2], arr[3], Integer.parseInt(arr[0]));
-            }
-
-            if (isAmbiguous(arr[3])){
-                //System.out.println("Found an ambiguous word: " + arr[1]);
-                addToLikelihood(arr[3], arr[2], Integer.parseInt(arr[0]));
-                addToLikelihood(arr[3], arr[1], Integer.parseInt(arr[0]));
-            }
+        		for(String pair : keyValuePairs)                
+        		{
+        		    String[] entry = pair.split("=");         
+        		    tempvalue.put(entry[0].trim(), Integer.parseInt(entry[1].trim()));
+        		}
+        		
+        		likelihood.put(temp, tempvalue);
+        		
+        	}
+        	counter++;
         }
-
-        //System.out.println(likelihood);
         
         long init_time = System.currentTimeMillis();
-
         System.out.println(act_time-init_time);
-
-        br = new BufferedReader(new FileReader("test.txt"));
+        br = new BufferedReader(new FileReader("data/test.txt"));
 
         while((line = br.readLine()) != null){
             String arr[] = line.split(" ");
@@ -112,8 +116,6 @@ public class TrainContext {
         System.out.println(System.currentTimeMillis() - init_time);
     }
 
-
-
     public static int getContextStrength(String word, ArrayList<String> context){
         int strength = 1;
 
@@ -128,8 +130,6 @@ public class TrainContext {
 
         return strength;
     }
-
-
 
     public static ArrayList<String> getAmbiguousWords(String str){
 
@@ -146,8 +146,6 @@ public class TrainContext {
 
         return new ArrayList<String>();
     }
-
-
 
     public static int getLikelihood(String str1, String str2){
         if (likelihood.containsKey(str1)){
@@ -167,34 +165,6 @@ public class TrainContext {
             return 0;
         }
     }
-
-
-
-    public static void addToLikelihood(String str1, String str2, int freq){
-        if (likelihood.containsKey(str1)){
-            //The ambiguous word is already registered
-            //Retrieve the arraylist of all the hashmaps associated with this ambiguous word
-            HashMap<String, Integer> temp = likelihood.get(str1);
-
-            if (temp.containsKey(str2)){
-                //This context is already registered for this ambiguous word
-                //Add the pervious frequency to the current one and update it
-                temp.put(str2, temp.get(str2)+freq );
-            } else {
-                //This is a new context to the ambiguous word
-                //Add the context along with the frequency value to the hashmap
-                temp.put(str2, freq);
-            }
-        } else {
-            //The ambiguous word is not seen before
-            //Initialize a hashmap with the context word along with its frequency
-            HashMap<String, Integer> temp = new HashMap<String, Integer>();
-            temp.put(str2, freq);
-            likelihood.put(str1, temp);
-        }
-    }
-
-
 
     public static boolean isAmbiguous(String str){
         Iterator<ArrayList<String>> it = homophonedb.iterator();
