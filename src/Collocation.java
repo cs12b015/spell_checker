@@ -42,6 +42,10 @@ public class Collocation{
     public int getSize(){
         return this.size;
     }
+    
+    public ArrayList<ColWord> getCollocation(){
+    	return this.collocation;
+    }
 
     //Get method for colWord in a collocation, given an index
     public ColWord getColWord(int i){
@@ -61,6 +65,11 @@ public class Collocation{
             if (this.size != c.getSize()){
                 return false;
             }else {
+                for (int i = 0; i < this.size; i++){
+                	if (!this.collocation.get(i).equals(c.getColWord(i))){
+                		return false;
+                	}
+                }
                 return true;
             }
     	}

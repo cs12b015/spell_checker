@@ -52,4 +52,28 @@ public class ColWord{
             return true;
         }
     }
+    
+    @Override
+    public boolean equals(Object obj){
+
+        if (!(obj instanceof ColWord)) return false;
+        if (obj == this) return true;
+
+    	ColWord c = (ColWord)obj;
+    	if(this.pos != c.pos){
+    		return false;
+    	}else{
+            if (this.word != c.getWord()){
+                return false;
+            }else {
+                return true;
+            }
+    	}
+    }
+    
+    @Override
+    public int hashCode(){
+    	return 2;
+    }
+
 }

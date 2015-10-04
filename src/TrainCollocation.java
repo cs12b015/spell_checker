@@ -13,16 +13,16 @@ public class TrainCollocation{
     
     public static void main(String[] args) throws NumberFormatException, IOException {
         
-        BufferedReader br = new BufferedReader(new FileReader("test_db.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("data/test_db.csv"));
         String line =  null;
 
         while((line=br.readLine())!=null){
             String arr[] = line.split("\t");
             BigInteger abcd = new BigInteger(arr[1]);
-            dictionary.put(arr[0],abcd);
+            dictionary.put(arr[0].toLowerCase(),abcd);
         }
-    	
-        br = new BufferedReader(new FileReader("homophonedb.txt"));
+		
+        br = new BufferedReader(new FileReader("data/homophonedb.txt"));
 
 
         while((line = br.readLine()) != null){
@@ -37,93 +37,53 @@ public class TrainCollocation{
             homophonedb.add(temp);
         }
 
-        br = new BufferedReader(new FileReader("w5c.txt"));
-
+        br = new BufferedReader(new FileReader("data/colocationtest.txt"));
+        line= null;
+        int counter=0;
+        String temp="";
         while((line=br.readLine())!=null){
-            String arr[] = line.split("\t");
-
-            for (int i = 1; i < 6; i++){
-            	
-            	if(!posmap.containsKey(arr[i])){
-            		posmap.put(arr[i], arr[i+5]);
-            	}
-            	
-                if (isAmbiguous(arr[i])){
-
-                    if (collocations.containsKey(arr[i])){
-
-                        HashMap<Collocation, Integer> temp_coll_hash = collocations.get(arr[i]);
-
-                        if (i > 1){
-                            ArrayList<ColWord> temp_coll = new ArrayList<ColWord>();
-                            for (int j = 1; j < i; j++){
-                                ColWord temp = new ColWord(arr[j+5]);
-                                temp_coll.add(temp);
-                            }
-                            Collocation coll = new Collocation(temp_coll);
-
-                            if (temp_coll_hash.containsKey(coll)){
-                                temp_coll_hash.put(coll, temp_coll_hash.get(coll)+ Integer.parseInt(arr[0]));
-                            }else {
-                                temp_coll_hash.put(coll, Integer.parseInt(arr[0]));
-                            }
-                        }
-
-                        if (i < 5){
-                            ArrayList<ColWord> temp_right_coll = new ArrayList<ColWord>();
-                            for (int j = i; j < 6; j++){
-                                ColWord temp = new ColWord(arr[j+5]);
-                                temp_right_coll.add(temp);
-                            }
-                            Collocation right_coll = new Collocation(temp_right_coll, 1);
-
-                            if (temp_coll_hash.containsKey(right_coll)){
-                                temp_coll_hash.put(right_coll, temp_coll_hash.get(right_coll) + Integer.parseInt(arr[0]));
-                            }else {
-                                temp_coll_hash.put(right_coll, Integer.parseInt(arr[0]));
-                            }
-                        }
-
-                        collocations.put(arr[i], temp_coll_hash);
-
-                    }else {
-                        HashMap<Collocation, Integer> temp_coll_hash = new HashMap<Collocation, Integer>();
-
-                        if (i > 1){
-                            ArrayList<ColWord> temp_coll = new ArrayList<ColWord>();
-                            for (int j = 1; j < i; j++){
-                                ColWord temp = new ColWord(arr[j+5]);
-                                temp_coll.add(temp);
-                            }
-
-                            temp_coll_hash.put(new Collocation(temp_coll), Integer.parseInt(arr[0]));
-                        }
-
-
-                        if (i < 5){
-                            ArrayList<ColWord> temp_right_coll = new ArrayList<ColWord>();
-                            for (int j = i; j < 6; j++){
-                                ColWord temp = new ColWord(arr[j+5]);
-                                temp_right_coll.add(temp);
-                            }
-
-                            temp_coll_hash.put(new Collocation(temp_right_coll, 1), Integer.parseInt(arr[0]));
-                        }
-
-                        collocations.put(arr[i], temp_coll_hash);
-                    }
-
-                }
+            if(counter % 2 == 0){
+                temp=line;
+                /*System.out.println(line);*/
             }
+            else{
+                                
+                String[] keyValuePairs = line.split("/");  
+                HashMap<Collocation, Integer> tempvalue = new HashMap<Collocation, Integer> ();               
+                
+                for(String pair : keyValuePairs)                
+                {
+                    String[] eachcolocation = pair.split("-"); 
+                    
+                    String posarraystring =eachcolocation[0];
+                    posarraystring = posarraystring.substring(1, posarraystring.length()-1);
+                    
+                    ArrayList<ColWord> collocate = new ArrayList<ColWord>();
+                    String[] posarray=posarraystring.split(", ");
+                    for(String item : posarray){    
+                        ColWord worrd = new ColWord(item);
+                        collocate.add(worrd);
+                    }
+                    int side =Integer.parseInt(eachcolocation[1]);
+                    Collocation newcol = new Collocation(collocate,side);
+                    Integer nummb = Integer.parseInt(eachcolocation[2]);
+                    tempvalue.put(newcol, nummb);  
+                }
+                collocations.put(temp, tempvalue); 
+            }
+            counter++;
         }
+
         
-        br = new BufferedReader(new FileReader("test.txt"));
-        /*
+        
+        br = new BufferedReader(new FileReader("data/test.txt"));
+        
         while((line = br.readLine()) != null){
             String arr[] = line.split(" ");
             for(int i = 0; i < arr.length; i++){
             	if(!dictionary.containsKey(arr[i])){
             		
+            		System.out.println("problem");
             		// no word in dictionary. Provide correct words and rate them
             		// get around 15 words with edit distance(trigrams) and continue.
             		
@@ -133,78 +93,144 @@ public class TrainCollocation{
                     ArrayList<ColWord> given_right_coll = new ArrayList<ColWord>();
             		
                     if (i > 1){                           
-                        for (int j = 1; j < i; j++){
+                        for (int j = 1; j < i && j < arr.length; j++){
                             given_coll.add(new ColWord(posmap.get(arr[j])));
                         }
                     }
 
                     if (i < 5){
-                        for (int j = i; j < 6; j++){
+                        for (int j = i+1; j < 6 && j < arr.length; j++){
                             given_right_coll.add(new ColWord(posmap.get(arr[j])));
                         }
                     }
                     
             		for(int j = 0; j < amb_words.size(); j++){
+            			if(!collocations.containsKey(amb_words.get(j))){
+            				scoremap.put(amb_words.get(j), 0);
+            				continue;
+            			}
                     	HashMap<Collocation,Integer> colmap = collocations.get(amb_words.get(j));
                     	
                     	Integer tempscore = 0;
-                    	if(colmap.containsKey(given_coll))
-                    		tempscore += colmap.get(given_coll);
-                    	if(colmap.containsKey(given_right_coll))
-                    		tempscore += colmap.get(given_right_coll);
+                    	if(given_coll != null){
+                    		//System.out.println("colmap - " + colmap );
+                    		//System.out.println("givencoll - " + given_coll);
+                    		Iterator it = colmap.entrySet().iterator();
+                    	    while (it.hasNext()) {
+                    	        Map.Entry pair = (Map.Entry)it.next();
+                    	        int tempstr = getStrength((Collocation)pair.getKey(), new Collocation(given_coll, 0));
+                    	        tempscore += tempstr*tempstr * (Integer)pair.getValue();
+                    	        
+                    	        //tempscore += (getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1))^2)*(Integer)pair.getValue();
+                    	        //System.out.println(pair.getKey() + " = " + pair.getValue());
+                    	        //it.remove(); // avoids a ConcurrentModificationException
+                    	    }
+                    	}
+                    	if(given_right_coll != null){
+                    		Iterator it = colmap.entrySet().iterator();
+                    		while (it.hasNext()) {
+                    	        Map.Entry pair = (Map.Entry)it.next();
+                    	        int tempstr = getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1));
+                    	        tempscore += tempstr*tempstr * (Integer)pair.getValue();
+                    	        
+                    	        //tempscore += (getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1))^2)*(Integer)pair.getValue();
+                    	        //System.out.println(pair.getKey() + " = " + pair.getValue());
+                    	        //it.remove(); // avoids a ConcurrentModificationException
+                    	    }
+
+                    		
+                    	}
                     	scoremap.put(amb_words.get(j), tempscore);
                     		
                     }
                     
                     scoremap = sortByValue(scoremap);
                     List<String> list1 = new ArrayList<String>(scoremap.keySet());
-                    System.out.println(list1.get(0) + ", " + list1.get(1) + ", " + list1.get(2));
-            		
-            		break;
+                    //System.out.println(list1.get(0) + ", " + list1.get(1) + ", " + list1.get(2));
+            		//System.out.println(list1);
+            		//break;
             	}
             	else{
             		if (isAmbiguous(arr[i])){
-                        
+            			
                         ArrayList<String> amb_words = getAmbiguousWords(arr[i]);
+                        System.out.println(amb_words);
                         Map<String,Integer> scoremap = new HashMap<String,Integer>();
                         ArrayList<ColWord> given_coll = new ArrayList<ColWord>();
                         ArrayList<ColWord> given_right_coll = new ArrayList<ColWord>();
                         
                         if (i > 1){                           
-                            for (int j = 1; j < i; j++){
+                            for (int j = 1; j < i && j < arr.length; j++){
                                 given_coll.add(new ColWord(posmap.get(arr[j])));
+                                //System.out.println("givencoll - " + given_coll);
                             }
                         }
-
                         if (i < 5){
-                            for (int j = i; j < 6; j++){
+                            for (int j = i; j < 6 && j < arr.length; j++){
+                            	//System.out.println(j);
                                 given_right_coll.add(new ColWord(posmap.get(arr[j])));
+                                //System.out.println("givenrightcoll - " + given_right_coll);
                             }
                         }
                         for(int j = 0; j < amb_words.size(); j++){
+                        	//System.out.println(amb_words.get(j));
+                        	if(!collocations.containsKey(amb_words.get(j))){
+                				scoremap.put(amb_words.get(j), 0);
+                				continue;
+                			}
                         	HashMap<Collocation,Integer> colmap = collocations.get(amb_words.get(j));
-                        	
+                        	//System.out.println(colmap);
                         	Integer tempscore = 0;
-                        	if(colmap.containsKey(given_coll))
-                        		tempscore += colmap.get(given_coll);
-                        	if(colmap.containsKey(given_right_coll))
-                        		tempscore += colmap.get(given_right_coll);
+                        	if(given_coll != null){
+                        		//System.out.println("colmap - " + colmap );
+                        		//System.out.println("givencoll - " + given_coll);
+                        		Iterator it = colmap.entrySet().iterator();
+                        	    while (it.hasNext()) {
+                        	        Map.Entry pair = (Map.Entry)it.next();
+                        	        int tempstr = getStrength((Collocation)pair.getKey(), new Collocation(given_coll, 0));
+                        	        tempscore += tempstr*tempstr * (Integer)pair.getValue();
+                        	        
+                        	        //tempscore += (getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1))^2)*(Integer)pair.getValue();
+                        	        //System.out.println(pair.getKey() + " = " + pair.getValue());
+                        	        //it.remove(); // avoids a ConcurrentModificationException
+                        	    }
+                        	}
+                        	if(given_right_coll != null){
+                        		Iterator it = colmap.entrySet().iterator();
+                        		while (it.hasNext()) {
+                        	        Map.Entry pair = (Map.Entry)it.next();
+                        	        int tempstr = getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1));
+                        	        System.out.println(tempstr);
+                        	        tempscore += tempstr*tempstr * (Integer)pair.getValue();
+                        	        
+                        	        //tempscore += (getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1))^2)*(Integer)pair.getValue();
+                        	        //System.out.println(pair.getKey() + " = " + pair.getValue());
+                        	        //it.remove(); // avoids a ConcurrentModificationException
+                        	    }
+
+                        		
+                        	}
                         	scoremap.put(amb_words.get(j), tempscore);
                         		
                         }
                         
                         scoremap = sortByValue(scoremap);
-                        List<String> list1 = new ArrayList<String>(scoremap.keySet());
-                        System.out.println(list1.get(0) + ", " + list1.get(1) + ", " + list1.get(2));
+                        //System.out.println(scoremap);
+                        
+                        
+                       // List<String> keylist = new ArrayList<String>(scoremap.keySet());
+                       // List<Integer> valuelist = new ArrayList<Integer>(scoremap.valueSet());
+                        //System.out.println(list1);
+                        //System.out.println(list1.get(0) + ", " + list1.get(1) + ", " + list1.get(2));
                         //break;
 
                     }
             	}
             }
         }
-        */
+        
 
-        System.out.println(collocations);
+        //System.out.println(collocations);
 
     }
     
@@ -224,6 +250,25 @@ public class TrainCollocation{
     		sortedMap.put(entry.getKey(), entry.getValue());
     	}
     	return sortedMap;
+    }
+    
+    public static int getStrength(Collocation x, Collocation y){
+    	
+    	if(x.getSide() != y.getSide()){
+    		System.out.println("ok");
+    		return 1;
+    	}
+    	return 1+lcs(x.getCollocation(), y.getCollocation(), x.getSize(), y.getSize());
+    	
+    }
+    
+    public static int lcs(ArrayList<ColWord> x, ArrayList<ColWord> y, int xsize, int ysize){
+    	if (xsize == 0 || ysize == 0)
+    	     return 0;
+    	   if (x.get(xsize-1).equals(y.get(ysize-1)))
+    	     return 1 + lcs(x, y, xsize-1, ysize-1);
+    	   else
+    	     return Math.max(lcs(x, y, xsize, ysize-1), lcs(x, y, xsize-1, ysize));
     }
     
     public static ArrayList<String> getAmbiguousWords(String str){

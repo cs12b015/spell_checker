@@ -18,21 +18,30 @@ public class preprocesscollocation {
         	}
         	else{
         		        		
-        		String[] keyValuePairs = line.split("|");  
-        		System.out.println(counter/2+" "+keyValuePairs[1]);
+        		String[] keyValuePairs = line.split("/");  
+        		HashMap<Collocation, Integer> tempvalue = new HashMap<Collocation, Integer> ();               
         		
-        		/*HashMap<String, Integer> tempvalue = new HashMap<String, Integer> ();               
-
         		for(String pair : keyValuePairs)                
         		{
-        		    String[] entry = pair.split("=");         
-        		    tempvalue.put(entry[0].trim(), Integer.parseInt(entry[1].trim()));
+        			String[] eachcolocation = pair.split("-"); 
+        			
+        			String posarraystring =eachcolocation[0];
+        			posarraystring = posarraystring.substring(1, posarraystring.length()-1);
+        			
+        			ArrayList<ColWord> collocate = new ArrayList<ColWord>();
+        			String[] posarray=posarraystring.split(", ");
+        			for(String item : posarray){	
+        				ColWord worrd = new ColWord(item);
+        				collocate.add(worrd);
+        			}
+        			int side =Integer.parseInt(eachcolocation[1]);
+        			Collocation newcol = new Collocation(collocate,side);
+        			Integer nummb = Integer.parseInt(eachcolocation[2]);
+        			tempvalue.put(newcol, nummb);  
         		}
-        		
-        		likelihood.put(temp, tempvalue);	*/
+        		collocations.put(temp, tempvalue); 
         	}
         	counter++;
         }
-		
 	}
 }
