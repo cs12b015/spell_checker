@@ -8,12 +8,11 @@ public class TrainCollocation{
     public static ArrayList<ArrayList<String>> homophonedb = new ArrayList<ArrayList<String>>();
     public static Map<String, BigInteger> dictionary = new HashMap<String, BigInteger>();
     public static Map<String, String> posmap = new HashMap<String, String>();
-
     public static HashMap<String, HashMap<Collocation, Integer>> collocations = new HashMap<String, HashMap<Collocation, Integer>>();
     
     public static void main(String[] args) throws NumberFormatException, IOException {
         
-        BufferedReader br = new BufferedReader(new FileReader("../data/test_db.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("data/test_db.csv"));
         String line =  null;
 
         while((line=br.readLine())!=null){
@@ -22,7 +21,7 @@ public class TrainCollocation{
             dictionary.put(arr[0].toLowerCase(),abcd);
         }
 		
-        br = new BufferedReader(new FileReader("../data/homophonedb.txt"));
+        br = new BufferedReader(new FileReader("data/homophonedb.txt"));
 
 
         while((line = br.readLine()) != null){
@@ -37,7 +36,7 @@ public class TrainCollocation{
             homophonedb.add(temp);
         }
 
-        br = new BufferedReader(new FileReader("../data/colocationtest.txt"));
+        br = new BufferedReader(new FileReader("data/colocationtest.txt"));
         line= null;
         int counter=0;
         String temp="";
@@ -73,32 +72,23 @@ public class TrainCollocation{
             }
             counter++;
         }
-        
-        PrintStream console = System.out;    
-        PrintStream out = new PrintStream(new FileOutputStream("data/checkcolocations.txt"));
-        
-        System.setOut(out);
-        
-        System.out.println(collocations);
-       /* for (String s:likelihood.keySet()){
-        	System.out.println(s);
-        	System.out.println(likelihood.get(s));
-        }*/
-        
-        System.setOut(console);
+
         
         
-        br = new BufferedReader(new FileReader("../data/test.txt"));
+        br = new BufferedReader(new FileReader("data/test.txt"));
         
         while((line = br.readLine()) != null){
             String arr[] = line.split(" ");
+            for(int k = 0; k < arr.length -1; k++)
+            	System.out.print(arr[k]+ " ");
+            System.out.print(arr[arr.length - 1]);
+            System.out.print("\t");
             for(int i = 0; i < arr.length; i++){
             	if(!dictionary.containsKey(arr[i])){
             		
-            		System.out.println("problem");
             		// no word in dictionary. Provide correct words and rate them
             		// get around 15 words with edit distance(trigrams) and continue.
-            		
+            		//System.out.println(arr[i]);
             		ArrayList<String> amb_words = getAmbiguousWords(arr[i]); //  <- Change this.
                     Map<String,Integer> scoremap = new HashMap<String,Integer>();
                     ArrayList<ColWord> given_coll = new ArrayList<ColWord>();
@@ -166,7 +156,7 @@ public class TrainCollocation{
             		if (isAmbiguous(arr[i])){
             			
                         ArrayList<String> amb_words = getAmbiguousWords(arr[i]);
-                        //System.out.println(amb_words);
+                       // System.out.println(amb_words);
                         Map<String,Integer> scoremap = new HashMap<String,Integer>();
                         ArrayList<ColWord> given_coll = new ArrayList<ColWord>();
                         ArrayList<ColWord> given_right_coll = new ArrayList<ColWord>();
@@ -212,7 +202,7 @@ public class TrainCollocation{
                         		while (it.hasNext()) {
                         	        Map.Entry pair = (Map.Entry)it.next();
                         	        int tempstr = getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1));
-                        	        //System.out.println(tempstr);
+                        	       // System.out.println(tempstr);
                         	        tempscore += tempstr*tempstr * (Integer)pair.getValue();
                         	        
                         	        //tempscore += (getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1))^2)*(Integer)pair.getValue();
@@ -227,14 +217,54 @@ public class TrainCollocation{
                         }
                         
                         scoremap = sortByValue(scoremap);
-                        System.out.println(scoremap);
+                        //System.out.println(scoremap);
+                        int value1 = 0, value2 = 0;
+                        Iterator it = scoremap.entrySet().iterator();
+                        if(it.hasNext()){
+                        	 Map.Entry pair = (Map.Entry)it.next();
+                        	 value1 = (int)pair.getValue();
+                        	 if(it.hasNext()){
+                        		 pair = (Map.Entry)it.next();
+                        		 value2 = (int)pair.getValue();
+                        	 }
+                        }
+                        List<String> keylist = new ArrayList<String>(scoremap.keySet());
                         
-                        
-                       // List<String> keylist = new ArrayList<String>(scoremap.keySet());
+                        if(keylist.get(0) != arr[i]){
+                        	for(int k = 0; k < i; k++)
+                        		System.out.print(arr[k]+" ");
+                        	System.out.print(keylist.get(0));
+                        	for(int k = i+1; k < arr.length; k++)
+                        		System.out.print(" " + arr[k]);
+                        	System.out.print("\t" + value1 + "\t");
+                        	
+                        	for(int k = 0; k < i; k++)
+                        		System.out.print(arr[k]+" ");
+                        	System.out.print(keylist.get(1));
+                        	for(int k = i+1; k < arr.length; k++)
+                        		System.out.print(" " + arr[k]);
+                        	System.out.print("\t" + value2);
+                        }
+                        else{
+                        	for(int k = 0; k < i; k++)
+                        		System.out.print(arr[k]+" ");
+                        	System.out.print(keylist.get(1));
+                        	for(int k = i+1; k < arr.length; k++)
+                        		System.out.print(" " + arr[k]);
+                        	System.out.print("\t" + value2 + "\t");
+                        	
+                        	for(int k = 0; k < i; k++)
+                        		System.out.print(arr[k]+" ");
+                        	System.out.print(keylist.get(0));
+                        	for(int k = i+1; k < arr.length; k++)
+                        		System.out.print(" " + arr[k]);
+                        	System.out.print("\t" + value1);
+                        }
+                        System.out.print("\t");
                        // List<Integer> valuelist = new ArrayList<Integer>(scoremap.valueSet());
                         //System.out.println(list1);
                         //System.out.println(list1.get(0) + ", " + list1.get(1) + ", " + list1.get(2));
-                        //break;
+                        break;
 
                     }
             	}
@@ -266,39 +296,12 @@ public class TrainCollocation{
     
     public static int getStrength(Collocation x, Collocation y){
     	
-        if (x.getSide() != y.getSide()){
-            return 1;
-        }else {
-            //Check for the smaller collocation.
-            int small_size = 0;
-            if (x.getSize() < y.getSize()){
-                small_size = x.getSize();
-            }else {
-                small_size = y.getSize();
-            }
-
-            int conflict_size = 0;
-            //If the collocations are on the left side, do a bottom up
-            if (x.getSide() == 0){
-                for (int i = 1; i <= small_size; i++){
-                    if (x.getColWord(x.getSize()-i).matches(y.getColWord(y.getSize()-i))){
-                        conflict_size++;
-                    }else {
-                        continue;
-                    }
-                }
-            }else {
-                for (int i = 0; i < small_size; i++){
-                    if (x.getColWord(i).matches(y.getColWord(i))){
-                        conflict_size++;
-                    }else {
-                        continue;
-                    }
-                }
-            }
-
-            return conflict_size+1;
-        }
+    	if(x.getSide() != y.getSide()){
+    		//System.out.println("ok");
+    		return 1;
+    	}
+    	return 1+lcs(x.getCollocation(), y.getCollocation(), x.getSize(), y.getSize());
+    	
     }
     
     public static int lcs(ArrayList<ColWord> x, ArrayList<ColWord> y, int xsize, int ysize){
@@ -340,3 +343,4 @@ public class TrainCollocation{
         return false;
     }
 }
+

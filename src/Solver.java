@@ -8,6 +8,9 @@ public class Solver {
     public static HashMap<String, BigInteger> dictionary = new HashMap<String, BigInteger>();
     public static ArrayList<ArrayList<String>> homophonedb = new ArrayList<ArrayList<String>>();
     public static HashMap<String, HashMap<String, Integer>> likelihood = new HashMap<String, HashMap<String, Integer>>();
+    public static Map<String, ArrayList<String>> trigrams = new HashMap<String, ArrayList<String>>();
+    public static Map<String, String> posmap = new HashMap<String, String>();
+    public static HashMap<String, HashMap<Collocation, Integer>> collocations = new HashMap<String, HashMap<Collocation, Integer>>();
 
     public static void main(String[] args) throws NumberFormatException, IOException {
 
@@ -20,6 +23,7 @@ public class Solver {
             BigInteger abcd = new BigInteger(arr[1]);
             dictionary.put(arr[0],abcd);
         }
+
 
         br = new BufferedReader(new FileReader("../data/homophonedb.txt"));
 
@@ -49,29 +53,82 @@ public class Solver {
                 /*System.out.println(line);*/
             }
             else{
-
-
                 line = line.substring(1, line.length()-1);
                 String[] keyValuePairs = line.split(",");  
-
                 HashMap<String, Integer> tempvalue = new HashMap<String, Integer> ();               
-
                 for(String pair : keyValuePairs)                
                 {
                     String[] entry = pair.split("=");         
                     tempvalue.put(entry[0].trim(), Integer.parseInt(entry[1].trim()));
                 }
-
                 likelihood.put(temp, tempvalue);
-
             }
             counter++;
         }
 
-        //SpellCheck sp = new SpellCheck(dictionary);
 
-        TrainContext1 tc1 = new TrainContext1(dictionary, homophonedb, likelihood, "peace of cake");
-        System.out.println(tc1.getResult());
+        br = new BufferedReader(new FileReader("../data/trigrams_db.csv"));
+        line=null;
+        while((line=br.readLine())!=null){
+        	String tristring = line.substring(0,3);
+        	
+        	String arraystring= line.substring(4);
+        	arraystring=arraystring.substring(1, arraystring.length()-1);
+        	String[] keyValuePairs = arraystring.split(", "); 
+        	ArrayList<String> myarray= new ArrayList<String>();
+        	for(String pair : keyValuePairs)                
+    		{
+        		myarray.add(pair);
+    		}
+        	trigrams.put(tristring, myarray);	
+        }
+
+        br = new BufferedReader(new FileReader("../data/colocationtest.txt"));
+        line= null;
+        int counter1=0;
+        String temp1 = "";
+        while((line=br.readLine())!=null){
+            if(counter1 % 2 == 0){
+                temp1=line;
+                /*System.out.println(line);*/
+            }
+            else{
+                                
+                String[] keyValuePairs = line.split("/");  
+                HashMap<Collocation, Integer> tempvalue = new HashMap<Collocation, Integer> ();               
+                
+                for(String pair : keyValuePairs)                
+                {
+                    String[] eachcolocation = pair.split("-"); 
+                    
+                    String posarraystring =eachcolocation[0];
+                    posarraystring = posarraystring.substring(1, posarraystring.length()-1);
+                    
+                    ArrayList<ColWord> collocate = new ArrayList<ColWord>();
+                    String[] posarray=posarraystring.split(", ");
+                    for(String item : posarray){    
+                        ColWord worrd = new ColWord(item);
+                        collocate.add(worrd);
+                    }
+                    int side =Integer.parseInt(eachcolocation[1]);
+                    Collocation newcol = new Collocation(collocate,side);
+                    Integer nummb = Integer.parseInt(eachcolocation[2]);
+                    tempvalue.put(newcol, nummb);  
+                }
+                collocations.put(temp1, tempvalue); 
+            }
+            counter1++;
+        }
+
+
+        //SpellCheck1 sp1 = new SpellCheck1(dictionary, trigrams, "belivee");
+        //sp1.sortCorrectWords();
+        //sp1.printOut();
+        TrainCollocation1 tcol1 = new TrainCollocation1(homophonedb, dictionary, posmap, collocations, "college offers coarse conducted by highly qualified staff");
+        System.out.println(tcol1.getResult());
+
+        //TrainContext1 tc1 = new TrainContext1(dictionary, homophonedb, likelihood, "peace of cake");
+        //System.out.println(tc1.getResult());
         /*
            if (sp.isCorrect(word)){
            System.out.println("yes it is a correct word");
