@@ -1,4 +1,3 @@
-a, eh
 access, assess
 accessed, assessed
 acts, ax
@@ -40,7 +39,6 @@ averse, adverse
 away, aweigh
 awed, odd
 aweful, awful, offal
-aye, eye, I
 bail, bale
 bailed, baled
 bailee, bailey, bailie
@@ -67,7 +65,6 @@ bask, basque
 bat, batt
 baud, bawd
 bay, bey
-be, bee
 beach, beech
 bean, been
 beat, beet
@@ -114,7 +111,7 @@ burger, burgher
 bus, buss
 bussed, bust
 but, butt
-buy, by, bye
+buy, bye
 buyer, byre
 cache, cash
 cached, cashed
@@ -189,7 +186,6 @@ complacent, complaisant
 complement, compliment
 conch, conk
 conscious, conscience
-coo, coup
 copes, copse
 copped, copt
 cops, copse
@@ -367,7 +363,6 @@ hypercritical, hypocritical
 idle, idol, idyl
 imminent, eminent
 imminently, eminently
-in, inn
 inc, ink
 incite, insight
 innocence, innocents
@@ -474,7 +469,7 @@ nay, neigh
 nays, neighs
 neap, neep
 none, nun
-oar, or, ore
+oar, ore
 oh, owe
 ohs, owes
 one, won
@@ -742,7 +737,6 @@ warship, worship
 wary, wherry
 way, weigh, whey
 ways, weighs
-we, wee
 we'd, weed
 we'll, wheel
 we've, weave
