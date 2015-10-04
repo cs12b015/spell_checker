@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 import java.math.*;
 import java.lang.*;
-import org.apache.commons.codec.language;
+/*import org.apache.commons.codec.language;*/
 
 public class SpellCheck {
 
@@ -128,7 +128,7 @@ public class SpellCheck {
         }
     }
 
-    public void sortCorrectWordsBySoundex(){
+  /*  public void sortCorrectWordsBySoundex(){
         try {
             Collections.sort(correctWords, new Comparator<String>(){
                 public int compare(String str1, String str2){
@@ -140,7 +140,7 @@ public class SpellCheck {
             System.out.println(this.wrong_word);
             System.out.println("There is an illegal argument exception.");
         }
-    }
+    }*/
 
 
 }
