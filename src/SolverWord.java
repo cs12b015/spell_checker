@@ -2,12 +2,14 @@ import java.io.*;
 import java.util.*;
 import java.math.*;
 
+import org.apache.commons.codec.EncoderException;
+
 public class SolverWord {
 
 
     public static HashMap<String, BigInteger> dictionary = new HashMap<String, BigInteger>();
     public static Map<String, ArrayList<String>> trigrams = new HashMap<String, ArrayList<String>>();
-    public static void main(String[] args) throws NumberFormatException, IOException {
+    public static void main(String[] args) throws NumberFormatException, IOException, EncoderException {
 
         BufferedReader br = new BufferedReader(new FileReader("data/test_db.csv"));
         String line =  null;
@@ -35,7 +37,7 @@ public class SolverWord {
         	trigrams.put(tristring, myarray);	
         }
 
-        br = new BufferedReader(new FileReader("data/words.tsv"));
+        br = new BufferedReader(new FileReader("data/spellchecktest.txt"));
         line=null;
         while((line=br.readLine())!=null){
         	
