@@ -6,13 +6,24 @@ import java.math.*;
 public class TrainCollocation{
 
     public static ArrayList<ArrayList<String>> homophonedb = new ArrayList<ArrayList<String>>();
+    public static Map<String, BigInteger> dictionary = new HashMap<String, BigInteger>();
+    public static Map<String, String> posmap = new HashMap<String, String>();
 
     public static HashMap<String, HashMap<Collocation, Integer>> collocations = new HashMap<String, HashMap<Collocation, Integer>>();
     
     public static void main(String[] args) throws NumberFormatException, IOException {
         
-        BufferedReader br = new BufferedReader(new FileReader("homophonedb.txt"));
+        BufferedReader br = new BufferedReader(new FileReader("src/test_db.csv"));
         String line =  null;
+
+        while((line=br.readLine())!=null){
+            String arr[] = line.split("\t");
+            BigInteger abcd = new BigInteger(arr[1]);
+            dictionary.put(arr[0],abcd);
+        }
+    	
+        br = new BufferedReader(new FileReader("src/homophonedb.txt"));
+
 
         while((line = br.readLine()) != null){
             String arr[] = line.split(",");
@@ -26,12 +37,17 @@ public class TrainCollocation{
             homophonedb.add(temp);
         }
 
-        br = new BufferedReader(new FileReader("w5c.txt"));
+        br = new BufferedReader(new FileReader("src/w5c.txt"));
 
         while((line=br.readLine())!=null){
             String arr[] = line.split("\t");
 
             for (int i = 1; i < 6; i++){
+            	
+            	if(!posmap.containsKey(arr[i])){
+            		posmap.put(arr[i], arr[i+5]);
+            	}
+            	
                 if (isAmbiguous(arr[i])){
 
                     if (collocations.containsKey(arr[i])){
@@ -100,9 +116,128 @@ public class TrainCollocation{
                 }
             }
         }
+        
+        br = new BufferedReader(new FileReader("src/test.txt"));
+        while((line = br.readLine()) != null){
+            String arr[] = line.split(" ");
+            for(int i = 0; i < arr.length; i++){
+            	if(!dictionary.containsKey(arr[i])){
+            		
+            		// no word in dictionary. Provide correct words and rate them
+            		// get around 15 words with edit distance(trigrams) and continue.
+            		
+            		ArrayList<String> amb_words = getAmbiguousWords(arr[i]); //  <- Change this.
+                    Map<String,Integer> scoremap = new HashMap<String,Integer>();
+                    ArrayList<ColWord> given_coll = new ArrayList<ColWord>();
+                    ArrayList<ColWord> given_right_coll = new ArrayList<ColWord>();
+            		
+                    if (i > 1){                           
+                        for (int j = 1; j < i; j++){
+                            given_coll.add(new ColWord(posmap.get(arr[j])));
+                        }
+                    }
+
+                    if (i < 5){
+                        for (int j = i; j < 6; j++){
+                            given_right_coll.add(new ColWord(posmap.get(arr[j])));
+                        }
+                    }
+                    
+            		for(int j = 0; j < amb_words.size(); j++){
+                    	HashMap<Collocation,Integer> colmap = collocations.get(amb_words.get(j));
+                    	
+                    	Integer tempscore = 0;
+                    	if(colmap.containsKey(given_coll))
+                    		tempscore += colmap.get(given_coll);
+                    	if(colmap.containsKey(given_right_coll))
+                    		tempscore += colmap.get(given_right_coll);
+                    	scoremap.put(amb_words.get(j), tempscore);
+                    		
+                    }
+                    
+                    scoremap = sortByValue(scoremap);
+                    List<String> list1 = new ArrayList<String>(scoremap.keySet());
+                    System.out.println(list1.get(0) + ", " + list1.get(1) + ", " + list1.get(2));
+            		
+            		break;
+            	}
+            	else{
+            		if (isAmbiguous(arr[i])){
+                        
+                        ArrayList<String> amb_words = getAmbiguousWords(arr[i]);
+                        Map<String,Integer> scoremap = new HashMap<String,Integer>();
+                        ArrayList<ColWord> given_coll = new ArrayList<ColWord>();
+                        ArrayList<ColWord> given_right_coll = new ArrayList<ColWord>();
+                        
+                        if (i > 1){                           
+                            for (int j = 1; j < i; j++){
+                                given_coll.add(new ColWord(posmap.get(arr[j])));
+                            }
+                        }
+
+                        if (i < 5){
+                            for (int j = i; j < 6; j++){
+                                given_right_coll.add(new ColWord(posmap.get(arr[j])));
+                            }
+                        }
+                        for(int j = 0; j < amb_words.size(); j++){
+                        	HashMap<Collocation,Integer> colmap = collocations.get(amb_words.get(j));
+                        	
+                        	Integer tempscore = 0;
+                        	if(colmap.containsKey(given_coll))
+                        		tempscore += colmap.get(given_coll);
+                        	if(colmap.containsKey(given_right_coll))
+                        		tempscore += colmap.get(given_right_coll);
+                        	scoremap.put(amb_words.get(j), tempscore);
+                        		
+                        }
+                        
+                        scoremap = sortByValue(scoremap);
+                        List<String> list1 = new ArrayList<String>(scoremap.keySet());
+                        System.out.println(list1.get(0) + ", " + list1.get(1) + ", " + list1.get(2));
+                        //break;
+
+                    }
+            	}
+            }
+        }
 
         System.out.println(collocations);
 
+    }
+    
+    public static Map<String, Integer>  sortByValue(Map<String, Integer>  unsortMap) {	 
+    	List list = new LinkedList(unsortMap.entrySet());
+     
+    	Collections.sort(list, new Comparator() {
+    		public int compare(Object o2, Object o1) {
+    			return ((Comparable) ((Map.Entry) (o1)).getValue())
+    						.compareTo(((Map.Entry) (o2)).getValue());
+    		}
+    	});
+     
+    	Map sortedMap = new LinkedHashMap();
+    	for (Iterator it = list.iterator(); it.hasNext();) {
+    		Map.Entry entry = (Map.Entry) it.next();
+    		sortedMap.put(entry.getKey(), entry.getValue());
+    	}
+    	return sortedMap;
+    }
+    
+    public static ArrayList<String> getAmbiguousWords(String str){
+
+        Iterator<ArrayList<String>> it = homophonedb.iterator();
+
+        while(it.hasNext()){
+            ArrayList<String> amb_pair = it.next();
+            if (amb_pair.contains(str)){
+                return amb_pair;
+            } else {
+                continue;
+            }
+        }
+
+        return new ArrayList<String>();
     }
 
     public static boolean isAmbiguous(String str){

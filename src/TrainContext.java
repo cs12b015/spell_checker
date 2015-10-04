@@ -95,8 +95,13 @@ public class TrainContext {
                     while(it.hasNext()){
                         String word = it.next();
                         int str = getContextStrength(word, context);
+                        
+                        // Multiplied with prior. Check results.
+                        
                         BigInteger prior = dictionary.get(word.toUpperCase());
-                        System.out.println("The strength of " + word + " in this context is : " + str);
+                        BigInteger bigstr = BigInteger.valueOf(str);
+                        bigstr.multiply(prior);
+                        System.out.println("The strength of " + word + " in this context is : " + bigstr);
                     }
 
                 } else {

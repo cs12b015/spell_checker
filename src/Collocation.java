@@ -47,6 +47,16 @@ public class Collocation{
         return this.collocation.get(i);
     }
 
+    @Override
+    public boolean equals(Object obj){
+    	Collocation c = (Collocation)obj;
+    	if(this.side != c.side)
+    		return false;
+    	else{
+    		return this.collocation.equals(c.collocation);
+    	}
+    }
+    
     //This method says whether this collocation has any conflicts with the given collocation c.
     public boolean hasConflict(Collocation c){
         //Check if both the collocations lie on the same side of the word.
