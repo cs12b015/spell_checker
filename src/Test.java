@@ -20,5 +20,6 @@ public class Test {
         System.out.println(col_test.get(c1));
         System.out.println(col_test.get(c2));
         System.out.println(col_test.size());
+        System.out.println(Math.pow(5,3));
     }
 }

@@ -13,7 +13,7 @@ public class TrainCollocation{
     
     public static void main(String[] args) throws NumberFormatException, IOException {
         
-        BufferedReader br = new BufferedReader(new FileReader("data/test_db.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("../data/test_db.csv"));
         String line =  null;
 
         while((line=br.readLine())!=null){
@@ -22,7 +22,7 @@ public class TrainCollocation{
             dictionary.put(arr[0].toLowerCase(),abcd);
         }
 		
-        br = new BufferedReader(new FileReader("data/homophonedb.txt"));
+        br = new BufferedReader(new FileReader("../data/homophonedb.txt"));
 
 
         while((line = br.readLine()) != null){
@@ -37,7 +37,7 @@ public class TrainCollocation{
             homophonedb.add(temp);
         }
 
-        br = new BufferedReader(new FileReader("data/colocationtest.txt"));
+        br = new BufferedReader(new FileReader("../data/colocationtest.txt"));
         line= null;
         int counter=0;
         String temp="";
@@ -76,7 +76,7 @@ public class TrainCollocation{
 
         
         
-        br = new BufferedReader(new FileReader("data/test.txt"));
+        br = new BufferedReader(new FileReader("../data/test.txt"));
         
         while((line = br.readLine()) != null){
             String arr[] = line.split(" ");
@@ -154,7 +154,7 @@ public class TrainCollocation{
             		if (isAmbiguous(arr[i])){
             			
                         ArrayList<String> amb_words = getAmbiguousWords(arr[i]);
-                        System.out.println(amb_words);
+                        //System.out.println(amb_words);
                         Map<String,Integer> scoremap = new HashMap<String,Integer>();
                         ArrayList<ColWord> given_coll = new ArrayList<ColWord>();
                         ArrayList<ColWord> given_right_coll = new ArrayList<ColWord>();
@@ -200,7 +200,7 @@ public class TrainCollocation{
                         		while (it.hasNext()) {
                         	        Map.Entry pair = (Map.Entry)it.next();
                         	        int tempstr = getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1));
-                        	        System.out.println(tempstr);
+                        	        //System.out.println(tempstr);
                         	        tempscore += tempstr*tempstr * (Integer)pair.getValue();
                         	        
                         	        //tempscore += (getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1))^2)*(Integer)pair.getValue();
@@ -215,7 +215,7 @@ public class TrainCollocation{
                         }
                         
                         scoremap = sortByValue(scoremap);
-                        //System.out.println(scoremap);
+                        System.out.println(scoremap);
                         
                         
                        // List<String> keylist = new ArrayList<String>(scoremap.keySet());
@@ -254,12 +254,39 @@ public class TrainCollocation{
     
     public static int getStrength(Collocation x, Collocation y){
     	
-    	if(x.getSide() != y.getSide()){
-    		System.out.println("ok");
-    		return 1;
-    	}
-    	return 1+lcs(x.getCollocation(), y.getCollocation(), x.getSize(), y.getSize());
-    	
+        if (x.getSide() != y.getSide()){
+            return 1;
+        }else {
+            //Check for the smaller collocation.
+            int small_size = 0;
+            if (x.getSize() < y.getSize()){
+                small_size = x.getSize();
+            }else {
+                small_size = y.getSize();
+            }
+
+            int conflict_size = 0;
+            //If the collocations are on the left side, do a bottom up
+            if (x.getSide() == 0){
+                for (int i = 1; i <= small_size; i++){
+                    if (x.getColWord(x.getSize()-i).matches(y.getColWord(y.getSize()-i))){
+                        conflict_size++;
+                    }else {
+                        continue;
+                    }
+                }
+            }else {
+                for (int i = 0; i < small_size; i++){
+                    if (x.getColWord(i).matches(y.getColWord(i))){
+                        conflict_size++;
+                    }else {
+                        continue;
+                    }
+                }
+            }
+
+            return conflict_size+1;
+        }
     }
     
     public static int lcs(ArrayList<ColWord> x, ArrayList<ColWord> y, int xsize, int ysize){
