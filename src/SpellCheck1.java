@@ -12,16 +12,14 @@ public class SpellCheck1 {
     public static Map<String, ArrayList<String>> trigrams = new HashMap<String, ArrayList<String>>();
     public static ArrayList<String> correctWords = new ArrayList<String>();
     public static String wrong_word;
-    public static Map<String, BigInteger> correctwords1 = new HashMap<String, BigInteger>();
-    public static Map<String, BigInteger> correctwords2 = new HashMap<String, BigInteger>();
 
-    public SpellCheck1(Map<String, BigInteger> dictionary, Map<String, ArrayList<String>> trigrams, String line) throws IOException{
+    public SpellCheck1(Map<String, BigInteger> dictionary, Map<String, ArrayList<String>> trigrams, String line) throws IOException, EncoderException{
         this.dictionary = dictionary;
         this.trigrams = trigrams;
         this.wrong_word = line;
 
         
-        if (line.trim().length() >5){
+        if (line.trim().length() >15){
         	correctWords = generatecorrect(line.toUpperCase());
         }
         else{
@@ -37,6 +35,9 @@ public class SpellCheck1 {
     }
     public ArrayList<String> generatecorrectbruteforce(String word) {
 
+    	Map<String, BigInteger> correctwords1 = new HashMap<String, BigInteger>();
+    	Map<String, BigInteger> correctwords2 = new HashMap<String, BigInteger>();
+    	
         List<String> editings = editings(word);
         for(int i=0; i < editings.size(); i++){
             if(checkspelling(editings.get(i)) && !correctwords1.containsKey(editings.get(i))){
@@ -58,7 +59,14 @@ public class SpellCheck1 {
             	list1.add(list2.get(z));
             }
         }
-        List<String> list3 =list1.subList(0, 10);
+        List<String> list3;
+        if(list1.size() >=10){
+        	 list3 =list1.subList(0, 10);
+        }
+        else{
+        	 list3=list1;
+        }
+        
         ArrayList<String> mylist = new ArrayList<String>(list3);
         return mylist;    	
     }
@@ -89,7 +97,7 @@ public class SpellCheck1 {
     	}
     	return sortedMap;
     }
-    public ArrayList<String> generatecorrect(String word) {
+    public ArrayList<String> generatecorrect(String word) throws EncoderException {
         ArrayList<String> inputtrigrams=new ArrayList<String>();
         ArrayList<String> possiblecandidates=new ArrayList<String>();
         ArrayList<String> orginalcandidates=new ArrayList<String>();
@@ -105,12 +113,21 @@ public class SpellCheck1 {
                     possiblecandidates.add(temparray.get(j));
             }
         }
+        ArrayList<String> oneedit=new ArrayList<String>();
+        ArrayList<String> twoedit=new ArrayList<String>();
         for(int i=0;i<possiblecandidates.size();i++){
-            if(edit_distance(possiblecandidates.get(i),word,possiblecandidates.get(i).length(),word.length())<3)
+            if(edit_distance(possiblecandidates.get(i),word,possiblecandidates.get(i).length(),word.length())==1)
             {
-                orginalcandidates.add(possiblecandidates.get(i));
+                oneedit.add(possiblecandidates.get(i));
             }
+            
+            if(edit_distance(possiblecandidates.get(i),word,possiblecandidates.get(i).length(),word.length())==2)
+            {
+                twoedit.add(possiblecandidates.get(i));
+            }
+            
         }
+        overallsort(oneedit,twoedit,word);
         return orginalcandidates;
     }
 
@@ -183,6 +200,39 @@ public class SpellCheck1 {
         System.out.println(correctWords);
     }
 
+    public ArrayList<String> overallsort(ArrayList<String> oneedit,ArrayList<String> twoedit,String word) throws EncoderException{
+    	ArrayList<BigInteger> editonedist = new ArrayList<BigInteger>();
+    	ArrayList<BigInteger> edittwodist = new ArrayList<BigInteger>();
+    	Map<String,BigInteger> map=new HashMap<String,BigInteger>();
+    	BigInteger numb = new BigInteger("2");
+    	for(int i=0;i<oneedit.size();i++){
+    		int temmp = soundexdiff(oneedit.get(i),word);
+    		BigInteger bigstr = BigInteger.valueOf(temmp);
+    		editonedist.add( dictionary.get(oneedit.get(i)).multiply(numb).multiply(bigstr) );	
+    		map.put(oneedit.get(i),dictionary.get(oneedit.get(i)).multiply(numb).multiply(bigstr));
+    	}
+    	for(int i=0;i<twoedit.size();i++){
+    		int temmp = soundexdiff(twoedit.get(i),word);
+    		BigInteger bigstr = BigInteger.valueOf(temmp);
+    		edittwodist.add( dictionary.get(twoedit.get(i)).multiply(bigstr) );
+    		map.put(twoedit.get(i), dictionary.get(twoedit.get(i)).multiply(bigstr) );
+    	}
+    	map=sortByValue(map);
+    	System.out.println(map);
+    	
+    	ArrayList<String> original = new ArrayList<String> ();
+    	
+    	
+    	return original;
+    }
+    
+    
+    
+    public int soundexdiff(String str1,String str2) throws EncoderException{
+    	Soundex soundex = new Soundex();
+    	return soundex.difference(str1, str2);
+    }
+    
     public void sortCorrectWordsBySoundex(){
         try {
             Collections.sort(correctWords, new Comparator<String>(){
