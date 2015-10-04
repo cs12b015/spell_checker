@@ -12,7 +12,7 @@ public class spellcheck {
     public static void main(String[] args) throws NumberFormatException, IOException {
        // System.out.println(args[0]);
         long init_time = System.currentTimeMillis();
-        BufferedReader br = new BufferedReader(new FileReader("src/test_db.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("data/test_db.csv"));
         String line =  null;
 
         while((line=br.readLine())!=null){
@@ -21,7 +21,7 @@ public class spellcheck {
             dictionary.put(arr[0],abcd);
         }
 
-        BufferedReader br_del = new BufferedReader(new FileReader("src/del_cm.csv"));
+        BufferedReader br_del = new BufferedReader(new FileReader("data/del_cm.csv"));
 
         String del_line = null;
         int l = 0;
@@ -43,6 +43,8 @@ public class spellcheck {
         String string2= "SATURDAY";
         int cost= edit_distance(sting1,string2 , sting1.length(), string2.length());
         System.out.println("the cost is "+cost);
+        
+        
         if(dictionary.containsKey(args[0].toUpperCase()))
         {
             System.out.println("yes it is a correct word");

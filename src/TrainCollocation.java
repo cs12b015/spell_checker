@@ -73,7 +73,19 @@ public class TrainCollocation{
             }
             counter++;
         }
-
+        
+        PrintStream console = System.out;    
+        PrintStream out = new PrintStream(new FileOutputStream("data/checkcolocations.txt"));
+        
+        System.setOut(out);
+        
+        System.out.println(collocations);
+       /* for (String s:likelihood.keySet()){
+        	System.out.println(s);
+        	System.out.println(likelihood.get(s));
+        }*/
+        
+        System.setOut(console);
         
         
         br = new BufferedReader(new FileReader("../data/test.txt"));
