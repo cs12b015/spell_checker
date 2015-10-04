@@ -4,8 +4,8 @@ import java.lang.*;
 import java.util.*;
 import java.math.*;
 
-import org.apache.commons.codec.EncoderException;
-import org.apache.commons.codec.language.*;
+//import org.apache.commons.codec.EncoderException;
+//import org.apache.commons.codec.language.*;
 
 public class SpellCheck1 {
     public static Map<String, BigInteger> dictionary = new HashMap<String, BigInteger>();
@@ -63,7 +63,7 @@ public class SpellCheck1 {
         return mylist;    	
     }
 
-    public static Boolean checkspelling(String word){
+    public Boolean checkspelling(String word){
         if(dictionary.containsKey(word.toUpperCase()))
         {
             return true;
@@ -89,6 +89,7 @@ public class SpellCheck1 {
     	}
     	return sortedMap;
     }
+
     public ArrayList<String> generatecorrect(String word) {
         ArrayList<String> inputtrigrams=new ArrayList<String>();
         ArrayList<String> possiblecandidates=new ArrayList<String>();
@@ -138,7 +139,7 @@ public class SpellCheck1 {
     
     
     
-    public static List<String> editings(String word) {
+    public List<String> editings(String word) {
         List<String> list = new ArrayList<String>();
 
         /*Deletions*/
@@ -183,25 +184,25 @@ public class SpellCheck1 {
         System.out.println(correctWords);
     }
 
-    public void sortCorrectWordsBySoundex(){
-        try {
-            Collections.sort(correctWords, new Comparator<String>(){
-                public int compare(String str1, String str2){
-                    Soundex soundex = new Soundex();
-                    try {
-						return soundex.difference(str1, str2);
-					} catch (EncoderException e) {
-						// TODO Auto-generated catch block			
-						e.printStackTrace();
-						return 0;
-					}
-                }
-             });
-       }catch(Exception e){
-            System.out.println(this.wrong_word);
-            System.out.println("There is an illegal argument exception.");
-        }
-    }
+//    public void sortCorrectWordsBySoundex(){
+//        try {
+//            Collections.sort(correctWords, new Comparator<String>(){
+//                public int compare(String str1, String str2){
+//                    Soundex soundex = new Soundex();
+//                    try {
+//						return soundex.difference(str1, str2);
+//					} catch (EncoderException e) {
+//						// TODO Auto-generated catch block			
+//						e.printStackTrace();
+//						return 0;
+//					}
+//                }
+//             });
+//       }catch(Exception e){
+//            System.out.println(this.wrong_word);
+//            System.out.println("There is an illegal argument exception.");
+//        }
+//    }
 
     public void sortCorrectWords(){
         try {

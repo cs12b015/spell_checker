@@ -125,7 +125,8 @@ public class Solver {
         //sp1.sortCorrectWords();
         //sp1.printOut();
         TrainCollocation1 tcol1 = new TrainCollocation1(homophonedb, dictionary, posmap, collocations, "college offers coarse conducted by highly qualified staff");
-        System.out.println(tcol1.getResult());
+        //System.out.println(tcol1.getResult());
+        tcol1.printOut();
 
         //TrainContext1 tc1 = new TrainContext1(dictionary, homophonedb, likelihood, "peace of cake");
         //System.out.println(tc1.getResult());

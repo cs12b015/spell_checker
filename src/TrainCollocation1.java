@@ -1,4 +1,3 @@
-
 import java.lang.*;
 import java.io.*;
 import java.util.*;
@@ -11,6 +10,7 @@ public class TrainCollocation1{
     public static Map<String, String> posmap = new HashMap<String, String>();
     public static HashMap<String, HashMap<Collocation, Integer>> collocations = new HashMap<String, HashMap<Collocation, Integer>>();
     public static Map<String, Integer> scoremap = new HashMap<String, Integer>();
+    public static String wrong_line;
 
     public TrainCollocation1(ArrayList<ArrayList<String>> homophonedb, Map<String, BigInteger> dictionary, Map<String, String> posmap, HashMap<String, HashMap<Collocation, Integer>> collocations, String line) throws NumberFormatException, IOException {
 
@@ -18,111 +18,43 @@ public class TrainCollocation1{
         this.dictionary = dictionary;
         this.posmap = posmap;
         this.collocations = collocations;
+        this.wrong_line = line;
 
         String arr[] = line.split(" ");
-        for(int k = 0; k < arr.length -1; k++)
-           // System.out.print(arr[k]+ " ");
-        //System.out.print(arr[arr.length - 1]);
-        //System.out.print("\t");
-        for(int i = 0; i < arr.length; i++){
-            if(!dictionary.containsKey(arr[i])){
+        for(int k1 = 0; k1 < arr.length -1; k1++)
+            // System.out.print(arr[k]+ " ");
+            //System.out.print(arr[arr.length - 1]);
+            //System.out.print("\t");
+            for(int i = 0; i < arr.length; i++){
+                if(!dictionary.containsKey(arr[i])){
 
-                // no word in dictionary. Provide correct words and rate them
-                // get around 15 words with edit distance(trigrams) and continue.
-                //System.out.println(arr[i]);
-                ArrayList<String> amb_words = getAmbiguousWords(arr[i]); //  <- Change this.
-                //Map<String,Integer> scoremap = new HashMap<String,Integer>();
-                ArrayList<ColWord> given_coll = new ArrayList<ColWord>();
-                ArrayList<ColWord> given_right_coll = new ArrayList<ColWord>();
-
-                if (i > 1){                           
-                    for (int j = 1; j < i && j < arr.length; j++){
-                        given_coll.add(new ColWord(posmap.get(arr[j])));
-                    }
-                }
-
-                if (i < 5){
-                    for (int j = i+1; j < 6 && j < arr.length; j++){
-                        given_right_coll.add(new ColWord(posmap.get(arr[j])));
-                    }
-                }
-
-                for(int j = 0; j < amb_words.size(); j++){
-                    if(!collocations.containsKey(amb_words.get(j))){
-                        scoremap.put(amb_words.get(j), 0);
-                        continue;
-                    }
-                    HashMap<Collocation,Integer> colmap = collocations.get(amb_words.get(j));
-
-                    Integer tempscore = 0;
-                    if(given_coll != null){
-                        //System.out.println("colmap - " + colmap );
-                        //System.out.println("givencoll - " + given_coll);
-                        Iterator it = colmap.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Map.Entry pair = (Map.Entry)it.next();
-                            int tempstr = getStrength((Collocation)pair.getKey(), new Collocation(given_coll, 0));
-                            tempscore += tempstr*tempstr * (Integer)pair.getValue();
-
-                            //tempscore += (getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1))^2)*(Integer)pair.getValue();
-                            //System.out.println(pair.getKey() + " = " + pair.getValue());
-                            //it.remove(); // avoids a ConcurrentModificationException
-                        }
-                    }
-                    if(given_right_coll != null){
-                        Iterator it = colmap.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Map.Entry pair = (Map.Entry)it.next();
-                            int tempstr = getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1));
-                            tempscore += tempstr*tempstr * (Integer)pair.getValue();
-
-                            //tempscore += (getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1))^2)*(Integer)pair.getValue();
-                            //System.out.println(pair.getKey() + " = " + pair.getValue());
-                            //it.remove(); // avoids a ConcurrentModificationException
-                        }
-
-
-                    }
-                    scoremap.put(amb_words.get(j), tempscore);
-
-                }
-
-                scoremap = sortByValue(scoremap);
-                List<String> list1 = new ArrayList<String>(scoremap.keySet());
-                //System.out.println(list1.get(0) + ", " + list1.get(1) + ", " + list1.get(2));
-                //System.out.println(list1);
-                //break;
-            }
-            else{
-                if (isAmbiguous(arr[i])){
-
-                    ArrayList<String> amb_words = getAmbiguousWords(arr[i]);
-                    // System.out.println(amb_words);
-                    Map<String,Integer> scoremap = new HashMap<String,Integer>();
+                    // no word in dictionary. Provide correct words and rate them
+                    // get around 15 words with edit distance(trigrams) and continue.
+                    //System.out.println(arr[i]);
+                    ArrayList<String> amb_words = getAmbiguousWords(arr[i]); //  <- Change this.
+                    //Map<String,Integer> scoremap = new HashMap<String,Integer>();
                     ArrayList<ColWord> given_coll = new ArrayList<ColWord>();
                     ArrayList<ColWord> given_right_coll = new ArrayList<ColWord>();
 
                     if (i > 1){                           
                         for (int j = 1; j < i && j < arr.length; j++){
                             given_coll.add(new ColWord(posmap.get(arr[j])));
-                            //System.out.println("givencoll - " + given_coll);
                         }
                     }
+
                     if (i < 5){
-                        for (int j = i; j < 6 && j < arr.length; j++){
-                            //System.out.println(j);
+                        for (int j = i+1; j < 6 && j < arr.length; j++){
                             given_right_coll.add(new ColWord(posmap.get(arr[j])));
-                            //System.out.println("givenrightcoll - " + given_right_coll);
                         }
                     }
+
                     for(int j = 0; j < amb_words.size(); j++){
-                        //System.out.println(amb_words.get(j));
                         if(!collocations.containsKey(amb_words.get(j))){
                             scoremap.put(amb_words.get(j), 0);
                             continue;
                         }
                         HashMap<Collocation,Integer> colmap = collocations.get(amb_words.get(j));
-                        //System.out.println(colmap);
+
                         Integer tempscore = 0;
                         if(given_coll != null){
                             //System.out.println("colmap - " + colmap );
@@ -143,7 +75,6 @@ public class TrainCollocation1{
                             while (it.hasNext()) {
                                 Map.Entry pair = (Map.Entry)it.next();
                                 int tempstr = getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1));
-                                // System.out.println(tempstr);
                                 tempscore += tempstr*tempstr * (Integer)pair.getValue();
 
                                 //tempscore += (getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1))^2)*(Integer)pair.getValue();
@@ -158,58 +89,136 @@ public class TrainCollocation1{
                     }
 
                     scoremap = sortByValue(scoremap);
-                    //System.out.println(scoremap);
-                    int value1 = 0, value2 = 0;
-                    Iterator it = scoremap.entrySet().iterator();
-                    if(it.hasNext()){
-                        Map.Entry pair = (Map.Entry)it.next();
-                        value1 = (int)pair.getValue();
-                        if(it.hasNext()){
-                            pair = (Map.Entry)it.next();
-                            value2 = (int)pair.getValue();
-                        }
-                    }
-                    List<String> keylist = new ArrayList<String>(scoremap.keySet());
-
-//                    if(keylist.get(0) != arr[i]){
-//                        for(int k = 0; k < i; k++)
-//                            //System.out.print(arr[k]+" ");
-//                        //System.out.print(keylist.get(0));
-//                        for(int k = i+1; k < arr.length; k++)
-//                           // System.out.print(" " + arr[k]);
-//                        //System.out.print("\t" + value1 + "\t");
-//
-//                        for(int k = 0; k < i; k++)
-//                            //System.out.print(arr[k]+" ");
-//                        //System.out.print(keylist.get(1));
-//                        for(int k = i+1; k < arr.length; k++)
-//                            //System.out.print(" " + arr[k]);
-//                        //System.out.print("\t" + value2);
-//                    }
-//                    else{
-//                        for(int k = 0; k < i; k++)
-//                            //System.out.print(arr[k]+" ");
-//                        //System.out.print(keylist.get(1));
-//                        for(int k = i+1; k < arr.length; k++)
-//                            //System.out.print(" " + arr[k]);
-//                        //System.out.print("\t" + value2 + "\t");
-//
-//                        for(int k = 0; k < i; k++)
-//                            //System.out.print(arr[k]+" ");
-//                        //System.out.print(keylist.get(0));
-//                        for(int k = i+1; k < arr.length; k++)
-//                            //System.out.print(" " + arr[k]);
-//                        //System.out.print("\t" + value1);
-//                    }
-//                    //System.out.print("\t");
-                    // List<Integer> valuelist = new ArrayList<Integer>(scoremap.valueSet());
-                    //System.out.println(list1);
+                    List<String> list1 = new ArrayList<String>(scoremap.keySet());
                     //System.out.println(list1.get(0) + ", " + list1.get(1) + ", " + list1.get(2));
-                    break;
+                    //System.out.println(list1);
+                    //break;
+                }
+                else{
+                    if (isAmbiguous(arr[i])){
 
+                        ArrayList<String> amb_words = getAmbiguousWords(arr[i]);
+                        // System.out.println(amb_words);
+                        Map<String,Integer> scoremap = new HashMap<String,Integer>();
+                        ArrayList<ColWord> given_coll = new ArrayList<ColWord>();
+                        ArrayList<ColWord> given_right_coll = new ArrayList<ColWord>();
+
+                        if (i > 1){                           
+                            for (int j = 1; j < i && j < arr.length; j++){
+                                given_coll.add(new ColWord(posmap.get(arr[j])));
+                                //System.out.println("givencoll - " + given_coll);
+                            }
+                        }
+                        if (i < 5){
+                            for (int j = i; j < 6 && j < arr.length; j++){
+                                //System.out.println(j);
+                                given_right_coll.add(new ColWord(posmap.get(arr[j])));
+                                //System.out.println("givenrightcoll - " + given_right_coll);
+                            }
+                        }
+                        for(int j = 0; j < amb_words.size(); j++){
+                            //System.out.println(amb_words.get(j));
+                            if(!collocations.containsKey(amb_words.get(j))){
+                                scoremap.put(amb_words.get(j), 0);
+                                continue;
+                            }
+                            HashMap<Collocation,Integer> colmap = collocations.get(amb_words.get(j));
+                            //System.out.println(colmap);
+                            Integer tempscore = 0;
+                            if(given_coll != null){
+                                //System.out.println("colmap - " + colmap );
+                                //System.out.println("givencoll - " + given_coll);
+                                Iterator it = colmap.entrySet().iterator();
+                                while (it.hasNext()) {
+                                    Map.Entry pair = (Map.Entry)it.next();
+                                    int tempstr = getStrength((Collocation)pair.getKey(), new Collocation(given_coll, 0));
+                                    tempscore += tempstr*tempstr * (Integer)pair.getValue();
+
+                                    //tempscore += (getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1))^2)*(Integer)pair.getValue();
+                                    //System.out.println(pair.getKey() + " = " + pair.getValue());
+                                    //it.remove(); // avoids a ConcurrentModificationException
+                                }
+                            }
+                            if(given_right_coll != null){
+                                Iterator it = colmap.entrySet().iterator();
+                                while (it.hasNext()) {
+                                    Map.Entry pair = (Map.Entry)it.next();
+                                    int tempstr = getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1));
+                                    // System.out.println(tempstr);
+                                    tempscore += tempstr*tempstr * (Integer)pair.getValue();
+
+                                    //tempscore += (getStrength((Collocation)pair.getKey(), new Collocation(given_right_coll, 1))^2)*(Integer)pair.getValue();
+                                    //System.out.println(pair.getKey() + " = " + pair.getValue());
+                                    //it.remove(); // avoids a ConcurrentModificationException
+                                }
+
+
+                            }
+                            scoremap.put(amb_words.get(j), tempscore);
+
+                        }
+
+                        scoremap = sortByValue(scoremap);
+                        //System.out.println(scoremap);
+                        int value1 = 0, value2 = 0;
+                        Iterator it = scoremap.entrySet().iterator();
+                        if(it.hasNext()){
+                            Map.Entry pair = (Map.Entry)it.next();
+                            value1 = (int)pair.getValue();
+                            if(it.hasNext()){
+                                pair = (Map.Entry)it.next();
+                                value2 = (int)pair.getValue();
+                            }
+                        }
+                        //                    List<String> keylist = new ArrayList<String>(scoremap.keySet());
+                        //
+                        //                    if(keylist.get(0) != arr[i]){
+                        //                        for(int k = 0; k < i; k++){
+                        //                            System.out.print(arr[k]+" ");
+                        //                        }
+                        //                        System.out.print(keylist.get(0));
+                        //                        for(int k = i+1; k < arr.length; k++){
+                        //                            System.out.print(" " + arr[k]);
+                        //                        }
+                        //                        System.out.print("\t" + value1 + "\t");
+                        //
+                        //                        for(int k = 0; k < i; k++){
+                        //                            System.out.print(arr[k]+" ");
+                        //                        }
+                        //                        System.out.print(keylist.get(1));
+                        //                        for(int k = i+1; k < arr.length; k++){
+                        //                            System.out.print(" " + arr[k]);
+                        //                        }
+                        //                        System.out.print("\t" + value2);
+                        //                    }
+                        //                    else{
+                        //                        for(int k = 0; k < i; k++){
+                        //                            System.out.print(arr[k]+" ");
+                        //                        }
+                        //                        System.out.print(keylist.get(1));
+                        //                        for(int k = i+1; k < arr.length; k++){
+                        //                            System.out.print(" " + arr[k]);
+                        //                        }
+                        //                        System.out.print("\t" + value2 + "\t");
+                        //
+                        //                        for(int k = 0; k < i; k++){
+                        //                            System.out.print(arr[k]+" ");
+                        //                        }
+                        //                        System.out.print(keylist.get(0));
+                        //                        for(int k = i+1; k < arr.length; k++){
+                        //                            System.out.print(" " + arr[k]);
+                        //                        }
+                        //                        System.out.print("\t" + value1);
+                        //                    }
+                        //System.out.print("\t");
+                        // List<Integer> valuelist = new ArrayList<Integer>(scoremap.valueSet());
+                        //System.out.println(list1);
+                        //System.out.println(list1.get(0) + ", " + list1.get(1) + ", " + list1.get(2));
+                        break;
+
+                    }
                 }
             }
-        }
 
 
         //System.out.println(collocations);
@@ -285,6 +294,30 @@ public class TrainCollocation1{
 
     public Map<String, Integer> getResult(){
         return this.scoremap;
+    }
+
+    public void printOut(){
+        String arr[] = wrong_line.split(" ");
+        
+        for (int i = 0; i < arr.length; i++){
+            if (isAmbiguous(arr[i])){
+                ArrayList<String> temp_words = getAmbiguousWords(arr[i]);                
+                int prev_best = 0;
+                for (String word : temp_words){
+                    if (scoremap.get(word) > prev_best){
+                        prev_best = scoremap.get(word);
+                        arr[i] = word;
+                    }
+                }
+            }
+        }
+
+        String new_line = "";
+        for (int i = 0; i < arr.length; i++){
+            new_line = new_line + " " + arr[i];
+        }
+
+        System.out.println(new_line.trim());
     }
 
 }

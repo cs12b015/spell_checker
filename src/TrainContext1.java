@@ -11,7 +11,7 @@ public class TrainContext1{
 
     public static HashMap<String, HashMap<String, Integer>> likelihood = new HashMap<String, HashMap<String, Integer>>();
 
-    public static String line;
+    public static String wrong_line;
 
     public static HashMap<String, BigInteger> result = new HashMap<String, BigInteger>();
 
@@ -19,7 +19,7 @@ public class TrainContext1{
         this.dictionary = dictionary;
         this.homophonedb = homophonedb;
         this.likelihood = likelihood;
-        this.line = line;
+        this.wrong_line = line;
 
         //BufferedReader br = new BufferedReader(new FileReader("../data/test.txt"));
         //String line = null;
@@ -44,14 +44,14 @@ public class TrainContext1{
 
                 while(it.hasNext()){
                     String word = it.next();
-                    System.out.println(word);
+                    //System.out.println(word);
                     
                     int str = getContextStrength(word, context);
 
                     // Multiplied with prior. Check results.
 
                     BigInteger prior = dictionary.get(word.toUpperCase());
-                    System.out.println(prior);
+                    //System.out.println(prior);
                     BigInteger bigstr = BigInteger.valueOf(str);
                     bigstr.multiply(prior);
                     //System.out.println("The strength of " + word + " in this context is : " + bigstr);
@@ -131,6 +131,30 @@ public class TrainContext1{
             }
         }
         return false;
+    }
+
+    public void printOut(){
+        String arr[] = wrong_line.split(" ");
+        
+        for (int i = 0; i < arr.length; i++){
+            if (isAmbiguous(arr[i])){
+                ArrayList<String> temp_words = getAmbiguousWords(arr[i]);                
+                BigInteger prev_best = BigInteger.valueOf(0);
+                for (String word : temp_words){
+                    if (result.get(word).compareTo(prev_best) > 0){
+                        prev_best = result.get(word);
+                        arr[i] = word;
+                    }
+                }
+            }
+        }
+
+        String new_line = "";
+        for (int i = 0; i < arr.length; i++){
+            new_line = new_line + " " + arr[i];
+        }
+
+        System.out.println(wrong_line + "   " + new_line.trim());
     }
 
 }

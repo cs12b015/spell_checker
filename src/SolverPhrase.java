@@ -12,7 +12,7 @@ public class SolverPhrase {
     
     public static void main(String[] args) throws NumberFormatException, IOException {
 
-        BufferedReader br = new BufferedReader(new FileReader("data/test_db.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("../data/test_db.csv"));
         String line =  null;
         //String word = args[0].toUpperCase();
 
@@ -23,7 +23,7 @@ public class SolverPhrase {
         }
 
 
-        br = new BufferedReader(new FileReader("data/homophonedb.txt"));
+        br = new BufferedReader(new FileReader("../data/homophonedb.txt"));
 
         while((line = br.readLine()) != null){
             String arr[] = line.split(",");
@@ -40,7 +40,7 @@ public class SolverPhrase {
         //System.out.print(homophonedb);
 
 
-        br = new BufferedReader(new FileReader("data/likelihood.txt"));
+        br = new BufferedReader(new FileReader("../data/likelihood.txt"));
         line =  null;
         int counter=0;
         String temp="";
@@ -65,7 +65,7 @@ public class SolverPhrase {
         }
 
 
-        br = new BufferedReader(new FileReader("data/trigrams_db.csv"));
+        br = new BufferedReader(new FileReader("../data/trigrams_db.csv"));
         line=null;
         while((line=br.readLine())!=null){
         	String tristring = line.substring(0,3);
@@ -81,7 +81,7 @@ public class SolverPhrase {
         	trigrams.put(tristring, myarray);	
         }
 
-        br = new BufferedReader(new FileReader("data/phrasechecktest.txt"));
+        br = new BufferedReader(new FileReader("../data/phrasechecktest.txt"));
         line=null;
         while((line=br.readLine())!=null){
         	line=line.toUpperCase();
@@ -90,8 +90,9 @@ public class SolverPhrase {
         		if(!dictionary.containsKey(array[i]))
         		{
         			SpellCheck1 sp1 = new SpellCheck1(dictionary, trigrams, array[i]);
-        			sp1.sortCorrectWordsBySoundex();
-        			sp1.printOut();
+                    sp1.sortCorrectWords();
+        			//sp1.sortCorrectWordsBySoundex();
+        			//sp1.printOut();
         			array[i]=sp1.getResult().get(0);
         		}
         	}
@@ -99,9 +100,10 @@ public class SolverPhrase {
         	for(int i=0;i<array.length;i++){
         		newline=newline+" "+array[i];
         	}
-        	System.out.println(newline.trim());
+        	//System.out.println(newline.trim());
         	TrainContext1 tc1 = new TrainContext1(dictionary, homophonedb, likelihood, newline.trim());
-            System.out.println(tc1.getResult());
+            //System.out.println(tc1.getResult());
+            tc1.printOut();
         }
      }
 
