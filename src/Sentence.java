@@ -206,6 +206,9 @@ public class Sentence{
             if (!dictionary.containsKey(word)){
                 return i;
             }
+        }
+        for (int i = 0; i < sentence.size(); i++){
+            String word = sentence.get(i);
             if (isAmbiguous(word)){
                 return i;        
             }
