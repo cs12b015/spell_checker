@@ -55,12 +55,12 @@ public class Sentence{
     }
 
 
-    private int getCollocationStrength(String word, Collocation left_col, Collocation right_col){
+    private BigInteger getCollocationStrength(String word, Collocation left_col, Collocation right_col){
         //Return the strength of this word in the presence of these collocations
         HashMap<Collocation, Integer> word_col = collocations.get(word);
         //System.out.println(word);
         //System.out.println(word_col.size());
-        int strength = 1;
+        BigInteger strength = BigInteger.valueOf(1);
 
         try {
             Iterator it = word_col.entrySet().iterator();
@@ -69,12 +69,12 @@ public class Sentence{
                 Collocation temp_col = (Collocation)pair.getKey();
                 if (left_col != null){
                     if (temp_col.hasConflict(left_col)){
-                        strength = strength*(Integer)pair.getValue();
+                        strength = strength.multiply(BigInteger.valueOf((Integer)pair.getValue()));
                     }
                 }
                 if (right_col != null){
                     if (temp_col.hasConflict(right_col)){
-                        strength = strength*(Integer)pair.getValue();
+                        strength = strength.multiply(BigInteger.valueOf((Integer)pair.getValue()));
                     }
                 }
             }
@@ -126,10 +126,10 @@ public class Sentence{
     }
 
 
-    public HashMap<String, Integer> solve(Map<String, ArrayList<String>> trigrams) throws IOException{
+    public HashMap<String, BigInteger> solve(Map<String, ArrayList<String>> trigrams) throws IOException{
         ArrayList<String> candidates = getCandidates(trigrams);
-        HashMap<String, Integer> context_result = new HashMap<String, Integer>();
-        HashMap<String, Integer> collocation_result = new HashMap<String, Integer>();
+        HashMap<String, BigInteger> context_result = new HashMap<String, BigInteger>();
+        HashMap<String, BigInteger> collocation_result = new HashMap<String, BigInteger>();
 
         for (int i = 0; i < candidates.size(); i++){
             context_result.put(candidates.get(i), getContextStrength(candidates.get(i), context));
@@ -255,15 +255,15 @@ public class Sentence{
     }
 
 
-    public int getContextStrength(String word, ArrayList<String> context){
-        int strength = 1;
+    public BigInteger getContextStrength(String word, ArrayList<String> context){
+        BigInteger strength = BigInteger.valueOf(1);
 
         for (int i = 0; i < context.size(); i++){
             //System.out.println(context.get(i));
             if (context.get(i).trim() == word.trim()){
                 continue;
             } else {
-                strength = strength*getLikelihood(word, context.get(i));       
+                strength = strength.multiply(BigInteger.valueOf(getLikelihood(word, context.get(i))));       
             }
         }
 
