@@ -146,7 +146,7 @@ public class Solver {
         //Phrase p = new Phrase(homophonedb, dictionary, likelihood, "world war piece");
         //p.solve(trigrams);
 
-        Sentence s = new Sentence(homophonedb, dictionary, likelihood, posmap, collocations, "the eath and the moon");
+        Sentence s = new Sentence(homophonedb, dictionary, likelihood, posmap, collocations, "from the moon to the eath");
         s.solve(trigrams);
         //p.printOut();
         //TrainContext1 tc1 = new TrainContext1(dictionary, homophonedb, likelihood, "peace of cake");

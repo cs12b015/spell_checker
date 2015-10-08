@@ -130,15 +130,20 @@ public class Sentence{
         ArrayList<String> candidates = getCandidates(trigrams);
         HashMap<String, BigInteger> context_result = new HashMap<String, BigInteger>();
         HashMap<String, BigInteger> collocation_result = new HashMap<String, BigInteger>();
+        HashMap<String, BigInteger> final_result = new HashMap<String, BigInteger>();
 
         for (int i = 0; i < candidates.size(); i++){
-            context_result.put(candidates.get(i), getContextStrength(candidates.get(i), context));
-            collocation_result.put(candidates.get(i), getCollocationStrength(candidates.get(i), left_col, right_col));
+            BigInteger col_str = getCollocationStrength(candidates.get(i), left_col, right_col);
+            BigInteger con_str = getContextStrength(candidates.get(i), context);
+            context_result.put(candidates.get(i), con_str);
+            collocation_result.put(candidates.get(i), col_str);
+            final_result.put(candidates.get(i), con_str.multiply(col_str));
         }
 
         System.out.println(collocation_result);
         System.out.println(context_result);
-        return context_result;
+        System.out.println(final_result);
+        return final_result;
     }
 
 
