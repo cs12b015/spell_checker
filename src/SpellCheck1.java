@@ -13,7 +13,7 @@ public class SpellCheck1 {
     public static ArrayList<String> correctWords = new ArrayList<String>();
     public static String wrong_word;
 
-    public SpellCheck1(Map<String, BigInteger> dictionary, Map<String, ArrayList<String>> trigrams, String line) throws IOException, EncoderException{
+    public SpellCheck1(Map<String, BigInteger> dictionary, Map<String, ArrayList<String>> trigrams, String line) throws IOException{
         this.dictionary = dictionary;
         this.trigrams = trigrams;
         this.wrong_word = line;
@@ -33,6 +33,7 @@ public class SpellCheck1 {
     public ArrayList<String> getResult(){
         return this.correctWords;
     }
+
     public ArrayList<String> generatecorrectbruteforce(String word) {
 
     	Map<String, BigInteger> correctwords1 = new HashMap<String, BigInteger>();
@@ -97,12 +98,9 @@ public class SpellCheck1 {
     	}
     	return sortedMap;
     }
-<<<<<<< HEAD
 
-    public ArrayList<String> generatecorrect(String word) {
-=======
-    public ArrayList<String> generatecorrect(String word) throws EncoderException {
->>>>>>> cb97b4aef096ea9036b7e77f07fa08e9dafc14cf
+
+    public ArrayList<String> generatecorrect(String word){
         ArrayList<String> inputtrigrams=new ArrayList<String>();
         ArrayList<String> possiblecandidates=new ArrayList<String>();
         ArrayList<String> orginalcandidates=new ArrayList<String>();
@@ -132,7 +130,7 @@ public class SpellCheck1 {
             }
             
         }
-        overallsort(oneedit,twoedit,word);
+        //overallsort(oneedit,twoedit,word);
         return orginalcandidates;
     }
 
@@ -205,7 +203,6 @@ public class SpellCheck1 {
         System.out.println(correctWords);
     }
 
-<<<<<<< HEAD
 //    public void sortCorrectWordsBySoundex(){
 //        try {
 //            Collections.sort(correctWords, new Comparator<String>(){
@@ -225,7 +222,9 @@ public class SpellCheck1 {
 //            System.out.println("There is an illegal argument exception.");
 //        }
 //    }
-=======
+
+
+    /*
     public ArrayList<String> overallsort(ArrayList<String> oneedit,ArrayList<String> twoedit,String word) throws EncoderException{
     	ArrayList<BigInteger> editonedist = new ArrayList<BigInteger>();
     	ArrayList<BigInteger> edittwodist = new ArrayList<BigInteger>();
@@ -251,34 +250,33 @@ public class SpellCheck1 {
     	
     	return original;
     }
+    */
     
     
+//    public int soundexdiff(String str1,String str2) throws EncoderException{
+//    	Soundex soundex = new Soundex();
+//    	return soundex.difference(str1, str2);
+//    }
     
-    public int soundexdiff(String str1,String str2) throws EncoderException{
-    	Soundex soundex = new Soundex();
-    	return soundex.difference(str1, str2);
-    }
-    
-    public void sortCorrectWordsBySoundex(){
-        try {
-            Collections.sort(correctWords, new Comparator<String>(){
-                public int compare(String str1, String str2){
-                    Soundex soundex = new Soundex();
-                    try {
-						return soundex.difference(str1, str2);
-					} catch (EncoderException e) {
-						// TODO Auto-generated catch block			
-						e.printStackTrace();
-						return 0;
-					}
-                }
-             });
-       }catch(Exception e){
-            System.out.println(this.wrong_word);
-            System.out.println("There is an illegal argument exception.");
-        }
-    }
->>>>>>> cb97b4aef096ea9036b7e77f07fa08e9dafc14cf
+//    public void sortCorrectWordsBySoundex(){
+//        try {
+//            Collections.sort(correctWords, new Comparator<String>(){
+//                public int compare(String str1, String str2){
+//                    Soundex soundex = new Soundex();
+//                    try {
+//						return soundex.difference(str1, str2);
+//					} catch (EncoderException e) {
+//						// TODO Auto-generated catch block			
+//						e.printStackTrace();
+//						return 0;
+//					}
+//                }
+//             });
+//       }catch(Exception e){
+//            System.out.println(this.wrong_word);
+//            System.out.println("There is an illegal argument exception.");
+//        }
+//    }
 
     public void sortCorrectWords(){
         try {

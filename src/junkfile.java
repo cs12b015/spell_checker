@@ -9,10 +9,12 @@ public class junkfile {
 	public static HashMap<String, HashMap<String, Integer>> likelihood = new HashMap<String, HashMap<String, Integer>>();
 	
 	public static ArrayList<ArrayList<String>> homophonedb = new ArrayList<ArrayList<String>>();
+
+    public static HashMap<String, String> posmap = new HashMap<String, String>();
 	
 	public static void main(String[] args) throws IOException{
 		
-		BufferedReader br = new BufferedReader(new FileReader("data/homophonedb.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("../data/homophonedb.txt"));
 		String line= null;
         while((line = br.readLine()) != null){
             String arr[] = line.split(",");
@@ -26,34 +28,24 @@ public class junkfile {
             homophonedb.add(temp);
         }
         
-        br = new BufferedReader(new FileReader("data/w3_.txt"));
+        br = new BufferedReader(new FileReader("../data/w5_.txt"));
 		line= null;
         while((line = br.readLine()) != null) {
             String arr[] = line.split("\t");
 
-            if (isAmbiguous(arr[1])){
-                //System.out.println("Found an ambiguous word: " + arr[1]);
-                addToLikelihood(arr[1], arr[2], Integer.parseInt(arr[0]));
-                addToLikelihood(arr[1], arr[3], Integer.parseInt(arr[0]));
-            }
-
-            if (isAmbiguous(arr[2])){
-                //System.out.println("Found an ambiguous word: " + arr[1]);
-                addToLikelihood(arr[2], arr[1], Integer.parseInt(arr[0]));
-                addToLikelihood(arr[2], arr[3], Integer.parseInt(arr[0]));
-            }
-
-            if (isAmbiguous(arr[3])){
-                //System.out.println("Found an ambiguous word: " + arr[1]);
-                addToLikelihood(arr[3], arr[2], Integer.parseInt(arr[0]));
-                addToLikelihood(arr[3], arr[1], Integer.parseInt(arr[0]));
+            for (int i = 1; i < arr.length; i++){
+                for (int j = 1; j < arr.length; j++){
+                    if (arr[i] != arr[j]){
+                        addToLikelihood(arr[i], arr[j], Integer.parseInt(arr[0]));
+                    }
+                }
             }
         }
 
        /* System.out.println(likelihood);*/
         
         PrintStream console = System.out;    
-        PrintStream out = new PrintStream(new FileOutputStream("data/likelihood11.txt"));
+        PrintStream out = new PrintStream(new FileOutputStream("../data/likelihood1.txt"));
         
         System.setOut(out);
         

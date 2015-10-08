@@ -21,7 +21,7 @@ public class Solver {
         while((line=br.readLine())!=null){
             String arr[] = line.split("\t");
             BigInteger abcd = new BigInteger(arr[1]);
-            dictionary.put(arr[0],abcd);
+            dictionary.put(arr[0].toUpperCase(),abcd);
         }
 
 
@@ -32,7 +32,7 @@ public class Solver {
             ArrayList<String> temp = new ArrayList<String>();
 
             for (int i = 0; i < arr.length; i++){
-                temp.add(arr[i].trim());
+                temp.add(arr[i].trim().toUpperCase());
                 //System.out.println(arr[i].trim());
             }
 
@@ -42,7 +42,7 @@ public class Solver {
         //System.out.print(homophonedb);
 
 
-        br = new BufferedReader(new FileReader("../data/likelihood.txt"));
+        br = new BufferedReader(new FileReader("../data/likelihood1.txt"));
         line =  null;
         int counter=0;
         String temp="";
@@ -59,9 +59,14 @@ public class Solver {
                 for(String pair : keyValuePairs)                
                 {
                     String[] entry = pair.split("=");         
-                    tempvalue.put(entry[0].trim(), Integer.parseInt(entry[1].trim()));
+                    if (entry.length > 1){
+                        tempvalue.put(entry[0].trim().toUpperCase(), Integer.parseInt(entry[1].trim()));
+                    }else {
+                        System.out.println(entry[0]);
+                        continue;
+                    }
                 }
-                likelihood.put(temp, tempvalue);
+                likelihood.put(temp.toUpperCase(), tempvalue);
             }
             counter++;
         }
@@ -80,7 +85,14 @@ public class Solver {
     		{
         		myarray.add(pair);
     		}
-        	trigrams.put(tristring, myarray);	
+        	trigrams.put(tristring.toUpperCase(), myarray);	
+        }
+
+        br = new BufferedReader(new FileReader("../data/posmap.txt"));
+        line = null;
+        while ((line = br.readLine()) != null ){
+            String arr[] = line.split(" ");
+            posmap.put(arr[0].toUpperCase(), arr[1].toUpperCase());
         }
 
         br = new BufferedReader(new FileReader("../data/colocationtest.txt"));
@@ -107,7 +119,7 @@ public class Solver {
                     ArrayList<ColWord> collocate = new ArrayList<ColWord>();
                     String[] posarray=posarraystring.split(", ");
                     for(String item : posarray){    
-                        ColWord worrd = new ColWord(item);
+                        ColWord worrd = new ColWord(item.toUpperCase());
                         collocate.add(worrd);
                     }
                     int side =Integer.parseInt(eachcolocation[1]);
@@ -115,19 +127,28 @@ public class Solver {
                     Integer nummb = Integer.parseInt(eachcolocation[2]);
                     tempvalue.put(newcol, nummb);  
                 }
-                collocations.put(temp1, tempvalue); 
+                collocations.put(temp1.toUpperCase(), tempvalue); 
             }
             counter1++;
         }
+        //System.out.println(collocations);
 
 
         //SpellCheck1 sp1 = new SpellCheck1(dictionary, trigrams, "belivee");
         //sp1.sortCorrectWords();
+        //System.out.println(sp1.getResult());
+        //sp1.sortCorrectWords();
         //sp1.printOut();
-        TrainCollocation1 tcol1 = new TrainCollocation1(homophonedb, dictionary, posmap, collocations, "college offers coarse conducted by highly qualified staff");
+//        TrainCollocation1 tcol1 = new TrainCollocation1(homophonedb, dictionary, posmap, collocations, "college offers coarse conducted by highly qualified staff");
         //System.out.println(tcol1.getResult());
-        tcol1.printOut();
+ //       tcol1.printOut();
 
+        //Phrase p = new Phrase(homophonedb, dictionary, likelihood, "world war piece");
+        //p.solve(trigrams);
+
+        Sentence s = new Sentence(homophonedb, dictionary, likelihood, posmap, collocations, "the eath and the moon");
+        s.solve(trigrams);
+        //p.printOut();
         //TrainContext1 tc1 = new TrainContext1(dictionary, homophonedb, likelihood, "peace of cake");
         //System.out.println(tc1.getResult());
         /*

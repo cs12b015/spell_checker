@@ -11,9 +11,9 @@ public class TrainContext1{
 
     public static HashMap<String, HashMap<String, Integer>> likelihood = new HashMap<String, HashMap<String, Integer>>();
 
-    public static String wrong_line;
+    public String wrong_line;
 
-    public static HashMap<String, BigInteger> result = new HashMap<String, BigInteger>();
+    public HashMap<String, BigInteger> result = new HashMap<String, BigInteger>();
 
     public TrainContext1(Map<String, BigInteger> dictionary, ArrayList<ArrayList<String>> homophonedb, HashMap<String, HashMap<String, Integer>> likelihood, String line) throws NumberFormatException, IOException{
         this.dictionary = dictionary;
@@ -69,7 +69,7 @@ public class TrainContext1{
     }
 
 
-    public int getContextStrength(String word, ArrayList<String> context){
+    public static int getContextStrength(String word, ArrayList<String> context){
         int strength = 1;
 
         for (int i = 0; i < context.size(); i++){
@@ -84,7 +84,7 @@ public class TrainContext1{
         return strength;
     }
 
-    public ArrayList<String> getAmbiguousWords(String str){
+    public static ArrayList<String> getAmbiguousWords(String str){
 
         Iterator<ArrayList<String>> it = homophonedb.iterator();
 
@@ -100,7 +100,7 @@ public class TrainContext1{
         return new ArrayList<String>();
     }
 
-    public int getLikelihood(String str1, String str2){
+    public static int getLikelihood(String str1, String str2){
         if (likelihood.containsKey(str1)){
             //This word is ambiguous and hence, we can proceed forward
             HashMap<String, Integer> temp = likelihood.get(str1);
@@ -119,7 +119,7 @@ public class TrainContext1{
         }
     }
 
-    public boolean isAmbiguous(String str){
+    public static boolean isAmbiguous(String str){
         Iterator<ArrayList<String>> it = homophonedb.iterator();
 
         while(it.hasNext()){

@@ -85,6 +85,10 @@ public class Collocation{
         //Check if both the collocations lie on the same side of the word.
         //If no, then there is no point in checking for conflict. Else, check.
         if (this.side != c.getSide()){
+           // System.out.println("The given collocations are not on same side");
+           // printOut();
+           // c.printOut();
+           // System.out.println("Onto the next now...");
             return false;
         }else {
             //Check for the smaller collocation.
@@ -116,7 +120,19 @@ public class Collocation{
             }
 
             if (conflict_size == small_size) return true;
-            else return false;
+            else{
+                //System.out.println("The collocations do not match perfectly");
+                //printOut();
+                //c.printOut();
+                //System.out.println("Onto the next now...");
+             return false;
+            }
+        }
+    }
+
+    public void printOut(){
+        for (int i = 0; i < collocation.size(); i++){
+            System.out.println(collocation.get(i).getPos());
         }
     }
 }

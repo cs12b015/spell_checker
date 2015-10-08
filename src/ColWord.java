@@ -17,15 +17,15 @@ public class ColWord{
     //Constructor when only the pos is given
     //POS ColWords have word as an empty string
     public ColWord(String pos){
-        this.pos = pos;
+        this.pos = pos.toUpperCase();
         this.word = "";
         this.isWord = false;
     }
 
     //Constructor when both the word and pos are given
     public ColWord(String colWord, String pos){
-        this.word = colWord;
-        this.pos = pos;
+        this.word = colWord.toUpperCase();
+        this.pos = pos.toUpperCase();
         this.isWord = true;
     }
 
@@ -46,10 +46,13 @@ public class ColWord{
 
     //Method to check if this ColWord conflicts with another ColWord
     public boolean matches(ColWord colWord){
-        if (this.pos != colWord.getPos()){
-            return false;
-        }else {
+        //System.out.println("Comparing the words: " + pos + " and " + colWord.getPos());
+        if (this.pos.trim().equals(colWord.getPos().trim())){
+            //System.out.println("Returning true");
             return true;
+        }else {
+            //System.out.println("Returning false");
+            return false;
         }
     }
     
